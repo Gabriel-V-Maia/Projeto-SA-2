@@ -5,11 +5,29 @@ Tema : Oficina Mecânica "AutoMax Soluções"
 
 # Estrutura
 
-[COMING SOON]
+```
+Projeto-SA-2/
+├── src/
+│   ├── routes/
+│   │   └── api/
+│   │       └── ...
+│   ├── pages/
+│   │   └── ...
+│   ├── static/
+│   │   ├── imgs/
+│   │   │   └── ...
+│   │   └── styles/
+│   │       └── ...
+│   └── main.py
+│
+└── docs/
+```
+
+
 
 ## Desenvolvedores
 
-<@_@> [Gabriel Vinícius da Maia](https://github.com/Gabriel-V-Maia)
+🕡🕖 [Gabriel Vinícius da Maia](https://github.com/Gabriel-V-Maia)
   
 🐶 [Willian Guedes](https://github.com/WillianGuedesSenai) 
 
