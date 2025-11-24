@@ -5,7 +5,19 @@ Tema : Oficina Mecânica "AutoMax Soluções"
 
 # Estrutura
 
-[COMING SOON]
+```
+Projeto-SA-2/
+├── LICENSE
+├── README.md
+├── venv/ (criar com py -m venv venv)
+└── src/
+    ├── app.py
+    ├── run.bat
+    ├── pages/
+    ├── routes/
+    └── static/
+
+```
 
 ## Desenvolvedores
 
