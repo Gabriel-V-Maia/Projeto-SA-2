@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/auth.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1 class="auth-title">Bem-vindo de volta</h1>
+            <p class="auth-subtitle">Faça login para acessar o sistema</p>
+        </div>
+
+        <form class="auth-form" method="POST" action="/login">
+            <div class="form-group">
+                <label for="usuario" class="form-label">Usuário</label>
+                <input 
+                    type="text" 
+                    id="usuario" 
+                    name="usuario" 
+                    class="form-input" 
+                    placeholder="Digite seu usuário"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="senha" class="form-label">Senha</label>
+                <input 
+                    type="password" 
+                    id="senha" 
+                    name="senha" 
+                    class="form-input" 
+                    placeholder="Digite sua senha"
+                    required
+                >
+            </div>
+
+            <div class="form-options">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="lembrar">
+                    <span>Lembrar de mim</span>
+                </label>
+                <a href="/recuperar-senha" class="link-secondary">Esqueceu a senha?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Entrar</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Não tem uma conta? <a href="/cadastro" class="link-primary">Cadastre-se</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
