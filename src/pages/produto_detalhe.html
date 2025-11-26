@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .produto-wrapper {
+        max-width: 1200px;
+        margin: 4rem auto;
+        display: grid;
+        grid-template-columns: 560px 1fr;
+        gap: 4rem;
+        align-items: start;
+    }
+
+    .produto-imagem {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+    }
+
+    .info h1 {
+        font-size: 2.9rem;
+        font-weight: 800;
+        color: var(--secondary);
+        margin: 0 0 1 1.2rem;
+        line-height: 1.2;
+    }
+
+    .categoria {
+        display: inline-block;
+        background: var(--primary);
+        color: white;
+        padding: 0.5rem 1.4rem;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .preco {
+        font-size: 3.8rem;
+        font-weight: 800;
+        color: var(--primary);
+        margin: 2rem 0 1.5rem;
+    }
+
+    .preco small {
+        font-size: 1.3rem;
+        color: var(--text-light);
+        font-weight: 500;
+    }
+
+    .descricao {
+        font-size: 1.15rem;
+        line-height: 1.9;
+        color: var(--text);
+        margin-bottom: 2.5rem;
+        text-align: justify;
+    }
+
+    .btn-grande {
+        padding: 1.3rem 3.5rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        width: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-info {
+        background: var(--surface);
+        padding: 1.8rem;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-bottom: 1.5rem 0;
+    }
+
+    .card-info h3 {
+        color: var(--secondary);
+        margin-bottom: 1rem;
+        font-size: 1.25rem;
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 0.5rem;
+    }
+
+    .card-info p {
+        margin: 0.8rem 0;
+        color: var(--text);
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .card-info strong {
+        color: var(--secondary);
+    }
+
+    .produtos-relacionados {
+        margin-top: 4rem;
+    }
+
+    .produtos-relacionados h2 {
+        font-size: 2rem;
+        color: var(--secondary);
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .grid-relacionados {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2rem;
+    }
+
+    @media (max-width: 992px) {
+        .produto-wrapper {
+            grid-template-columns: 1fr;
+        }
+        .info h1 { font-size: 2.5rem; }
+        .preco { font-size: 3.2rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="produto-wrapper">
+        <!-- Imagem -->
+        <div>
+            <img src="https://placehold.co/800x800/1A1A1A/FFFFFF?text=Pastilha+de+Freio&font=roboto"
+                 alt="Pastilha de Freio Dianteira"
+                 class="produto-imagem">
+        </div>
+
+        <!-- Informações + Conteúdo extra -->
+        <div class="info">
+            <span class="categoria">Freios</span>
+            <h1>Pastilha de Freio Dianteira Cerâmica</h1>
+
+            <div class="preco">
+                R$ 189,90
+                <small>à vista no PIX ou boleto</small>
+            </div>
+
+            <p class="descricao">
+                Pastilhas de cerâmica de alta performance com tecnologia anti-ruído. 
+                Excelente poder de frenagem em qualquer condição, maior vida útil e praticamente zero poeira nas rodas. 
+                Produto original ou similar de primeira linha, com garantia de 6 meses.
+            </p>
+
+            <a href="/contato" class="btn btn-primary btn-grande">
+                Solicitar Orçamento
+            </a>
+
+            <!-- Caixa de informações técnicas -->
+            <div class="card-info">
+                <h3>Informações Técnicas</h3>
+                <p><strong>Código:</strong> <span>PT-00189</span></p>
+                <p><strong>Marca:</strong> <span>Bosch / Cobreq / Fras-le</span></p>
+                <p><strong>Material:</strong> <span>Cerâmica Premium</span></p>
+                <p><strong>Garantia:</strong> <span>6 meses</span></p>
+                <p><strong>Estoque:</strong> <span>148 unidades</span></p>
+            </div>
+
+            <!-- Caixa de compatibilidade -->
+            <div class="card-info">
+                <h3>Veículos Compatíveis</h3>
+                <p>• Volkswagen Gol G5/G6/G7/G8</p>
+                <p>• Fiat Palio, Uno, Strada</p>
+                <p>• Chevrolet Onix, Prisma, Corsa</p>
+                <p>• Ford Ka, Fiesta</p>
+                <p>• Renault Sandero, Logan</p>
+                <p><strong>+ de 50 modelos populares</strong></p>
+            </div>
+
+            <!-- Botão secundário -->
+            <a href="https://wa.me/5547999999999" class="btn btn-outline" style="width:100%; padding:1rem; text-align:center;">
+                Falar no WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <!-- Produtos Relacionados (preenche o fundo) -->
+    <div class="produtos-relacionados">
+        <h2>Produtos Relacionados</h2>
+        <div class="grid-relacionados">
+            <div class="product-card" style="text-align:center;">
+                <img src="https://placehold.co/400x400" style="border-radius:12px; margin-bottom:1rem;">
+                <h3>Disco de Freio Ventilado</h3>
+                <p style="color:var(--primary); font-size:1.4rem; font-weight:700;">R$ 279,90</p>
+            </div>
+            <div class="product-card" style="text-align:center;">
+                <img src="https://placehold.co/400x400" style="border-radius:12px; margin-bottom:1rem;">
+                <h3>Fluido de Freio DOT 4</h3>
+                <p style="color:var(--primary); font-size:1.4rem; font-weight:700;">R$ 29,90</p>
+            </div>
+            <div class="product-card" style="text-align:center;">
+                <img src="https://placehold.co/400x400" style="border-radius:12px; margin-bottom:1rem;">
+                <h3>Pastilha Traseira</h3>
+                <p style="color:var(--primary); font-size:1.4rem; font-weight:700;">R$ 149,90</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

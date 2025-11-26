@@ -16,3 +16,6 @@ def login():
 @app.route('/cadastro')
 def cadastro():
     return render_template('cadastro.html')
+
+# ← só essa linha abaixo
+import routes.produto
