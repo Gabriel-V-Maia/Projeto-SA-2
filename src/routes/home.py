@@ -14,8 +14,13 @@ def home():
 def index():
     return render_template('index.html')
 
-@app.route('/login')
+@app.route('/login', methods =['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        log_nome = request.form.get("usuario")
+        log_senha = request.form.get("senha")
+        print(f"nome: {log_nome}\nsenha: {log_senha}")
+
     return render_template('login.html')
 
 @app.route('/cadastro', methods=['GET', 'POST'])
