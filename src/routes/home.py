@@ -2,11 +2,6 @@ from flask import render_template, request, redirect, session
 from app import app, get_db
 import bcrypt
 
-
-# -------------------------------------------
-# HOME
-# -------------------------------------------
-@app.route('/home')
 def home():
     usuario = session.get("usuario")
     if not usuario:
@@ -32,12 +27,16 @@ def login():
 
         conn = get_db()
         cursor = conn.cursor()
-
-        cursor.execute("SELECT senha FROM funcionarios WHERE nome_funcionario=?", (log_nome,))
+        # funcionario
+        cursor.execute("SELECT senha, nivel_de_acesso FROM funcionarios WHERE nome_funcionario=?", (log_nome,))
         row = cursor.fetchone()
+        print(log_senha)
+        
         if row and bcrypt.checkpw(log_senha.encode('utf-8'), row[0]):
             session["usuario"] = log_nome
             session["tipo"] = "funcionario"
+            session["cargo"] = row[1] #nivel de acesso
+            print("SESSION ATUAL:", session)
             return redirect('/home')
 
         # ---- Cliente ----
@@ -50,7 +49,7 @@ def login():
 
         return "Usuário ou senha incorretos"
 
-    return render_template('cadastro.html')
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
@@ -131,4 +130,3 @@ def cadastro():
 
     return render_template('cadastro.html')
 
-import routes.produto

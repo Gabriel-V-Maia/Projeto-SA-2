@@ -8,6 +8,8 @@ log = Logger("App", enabled=True)
 
 app = Flask(__name__, template_folder="pages")
 
+app.secret_key = "uma_chave_secreta_segura" # aqui será colocado a secret key, essa é só exemplo
+
 DATABASE = 'automax.db'
 
 def get_db():
