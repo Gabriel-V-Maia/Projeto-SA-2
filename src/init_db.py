@@ -65,8 +65,16 @@ def init_database():
         FOREIGN KEY (id_veiculo) REFERENCES veiculos(id_veiculo) ON DELETE CASCADE
     );
     
-    CREATE TABLE IF NOT EXISTS logs (
-        log INTEGER PRIMARY KEY AUTOINCREMENT,
+    CREATE TABLE IF NOT EXISTS logs_fun(
+        id_logs_fun INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_func INTEGER,
+        id_log INTEGER,
+        FOREIGN KEY (id_func) REFERENCES funcionarios(id_funcionario) ON DELETE SET NULL
+        FOREIGN KEY (id_log) REFERENCES logs(id_log) ON DELETE SET NULL
+    );
+    
+    CREATE TABLE IF NOT EXISTS logs (s
+        id_log INTEGER PRIMARY KEY AUTOINCREMENT,
         id_funcionario INTEGER,
         detalhe TEXT,
         momento_acao TEXT,
