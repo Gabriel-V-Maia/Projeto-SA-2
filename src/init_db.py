@@ -163,21 +163,23 @@ def Inserir_dados():
         VALUES (?, ?, ?, ?, ?)
     ''', clientes)
 
+    # Inserindo funcionários com diferentes níveis de acesso
+    funcionarios = [
+        ('gerente123', 'Carlos Mendes', '3'),      # Gerente - Nível 3
+        ('mecanico456', 'Roberto Santos', '2'),    # Mecânico - Nível 2
+        ('recep789', 'Ana Costa', '1')             # Recepcionista - Nível 1
+    ]
     
-
+    cursor.executemany('''
+        INSERT INTO funcionarios (senha, nome_funcionario, nivel_de_acesso)
+        VALUES (?, ?, ?)
+    ''', funcionarios)
 
     # Commit e fechamento da conexão
     conn.commit()
     conn.close()
 
 
-
-
-
 if __name__ == '__main__':
     init_database()
     Inserir_dados()
-    
-
-
-
