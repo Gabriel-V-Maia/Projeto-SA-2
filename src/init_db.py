@@ -15,7 +15,7 @@ def init_database():
         modelo TEXT NOT NULL,
         placa TEXT UNIQUE NOT NULL,
         id_cliente INTEGER,
-        FOREIGN KEY (id_veiculo) REFERENCES veiculos(id_veiculo) ON DELETE CASCADE
+        FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE CASCADE
     );
 
     CREATE TABLE IF NOT EXISTS produtos (
@@ -46,7 +46,7 @@ def init_database():
 
     CREATE TABLE IF NOT EXISTS ordem (
         id_ordem INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_funcionario INTEGER NOT NULL,
+        id_funcionario INTEGER,
         id_cliente INTEGER NOT NULL,
         id_veiculo INTEGER NOT NULL,
         tipo_ordem TEXT NOT NULL,

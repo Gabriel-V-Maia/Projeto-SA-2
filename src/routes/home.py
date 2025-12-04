@@ -2,6 +2,8 @@ from flask import render_template, request, redirect, session, flash
 from app import app, get_db
 import bcrypt
 import sqlite3
+import time
+
 
 def home():
     return redirect('/')
@@ -169,99 +171,109 @@ def pedir():
 
     cursor.execute("SELECT * FROM CLIENTES WHERE id_cliente = ?", (id_cliente,))    
     cliente = cursor.fetchone()
-    cursor.execute("SELECT id_veiculo FROM veiculos WHERE id_cliente = ?", (id_cliente,))
-    veiculo = cursor.fetchone()
+    cursor.execute("SELECT id_veiculo, marca, modelo, ano, placa FROM veiculos WHERE id_cliente = ?", (id_cliente,))
+    veiculos = cursor.fetchall()
     print(cliente)
-    return render_template('pedir.html', cliente=cliente, veiculo=veiculo)
+    return render_template('pedir.html', cliente=cliente, veiculos=veiculos)
+
+
+from flask import request, session
+import time
 
 @app.route("/pedir/troca-pecas", methods=["POST"])
 def troca_pecas():
+    conn = get_db()
+    cursor = conn.cursor()
+    id_cliente = session.get("id_cliente")
+    tipo = "Troca de peças"
+    abertura = time.ctime()
 
-    nome = request.form.get("nome")
-    telefone = request.form.get("telefone")
-    email = request.form.get("email")
-    marca = request.form.get("marca")
-    modelo = request.form.get("modelo")
-    ano = request.form.get("ano")
-    placa = request.form.get("placa")
-    pecas = request.form.get("pecas")
+    # Campos do formulário
+    id_veiculo = request.form.get("id_veiculo")
     descricao = request.form.get("descricao")
     observacoes = request.form.get("observacoes")
 
-    print("\n📦 TROCA DE PEÇAS RECEBIDO:")
-    print("Nome:", nome)
-    print("Telefone:", telefone)
-    print("Email:", email)
-    print("Marca:", marca)
-    print("Modelo:", modelo)
-    print("Ano:", ano)
-    print("Placa:", placa)
-    print("Peças:", pecas)
-    print("Descrição:", descricao)
-    print("Observações:", observacoes)
+    diagnostico = descricao
+    if observacoes:
+        diagnostico += f"\nObservações: {observacoes}"
 
+    cursor.execute("""
+        INSERT INTO ordem (id_cliente, id_veiculo, tipo_ordem, diagnostico, abertura)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        id_cliente,
+        id_veiculo,
+        tipo,
+        diagnostico,
+        abertura
+    ))
+    conn.commit()
     return "Recebido (Troca de Peças)"
+
 
 @app.route("/pedir/emergencial", methods=["POST"])
 def emergencial():
+    conn = get_db()
+    cursor = conn.cursor()
+    id_cliente = session.get("id_cliente")
+    tipo = "Serviço Emergencial"
+    abertura = time.ctime()
 
-    nome = request.form.get("nome")
-    telefone = request.form.get("telefone")
-    email = request.form.get("email")
-    marca = request.form.get("marca")
-    modelo = request.form.get("modelo")
-    ano = request.form.get("ano")
-    placa = request.form.get("placa")
+    # Campos do formulário
+    id_veiculo = request.form.get("id_veiculo")
     urgencia = request.form.get("urgencia")
     localizacao = request.form.get("localizacao")
     problema = request.form.get("problema")
     pode_dirigir = request.form.get("pode_dirigir")
     observacoes = request.form.get("observacoes")
 
-    print("\n🚨 EMERGENCIAL RECEBIDO:")
-    print("Nome:", nome)
-    print("Telefone:", telefone)
-    print("Email:", email)
-    print("Marca:", marca)
-    print("Modelo:", modelo)
-    print("Ano:", ano)
-    print("Placa:", placa)
-    print("Urgência:", urgencia)
-    print("Localização:", localizacao)
-    print("Problema:", problema)
-    print("Pode dirigir:", pode_dirigir)
-    print("Observações:", observacoes)
+    diagnostico = f"Urgência: {urgencia}\nLocalização: {localizacao}\nProblema: {problema}\nPode dirigir: {pode_dirigir}"
+    if observacoes:
+        diagnostico += f"\nObservações: {observacoes}"
 
+    cursor.execute("""
+        INSERT INTO ordem (id_cliente, id_veiculo, tipo_ordem, diagnostico, abertura)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        id_cliente,
+        id_veiculo,
+        tipo,
+        diagnostico,
+        abertura
+    ))
+    conn.commit()
     return "Recebido (Emergencial)"
+
 
 @app.route("/pedir/agendamento", methods=["POST"])
 def agendamento():
+    conn = get_db()
+    cursor = conn.cursor()
+    id_cliente = session.get("id_cliente")
+    tipo = "Agendamento de Serviço"
+    abertura = time.ctime()
 
-    nome = request.form.get("nome")
-    telefone = request.form.get("telefone")
-    email = request.form.get("email")
-    marca = request.form.get("marca")
-    modelo = request.form.get("modelo")
-    ano = request.form.get("ano")
-    placa = request.form.get("placa")
+    # Campos do formulário
+    id_veiculo = request.form.get("id_veiculo")
     tipo_servico = request.form.get("tipo_servico")
     data = request.form.get("data")
     horario = request.form.get("horario")
     descricao = request.form.get("descricao")
     observacoes = request.form.get("observacoes")
 
-    print("\n📅 AGENDAMENTO RECEBIDO:")
-    print("Nome:", nome)
-    print("Telefone:", telefone)
-    print("Email:", email)
-    print("Marca:", marca)
-    print("Modelo:", modelo)
-    print("Ano:", ano)
-    print("Placa:", placa)
-    print("Tipo de serviço:", tipo_servico)
-    print("Data:", data)
-    print("Horário:", horario)
-    print("Descrição:", descricao)
-    print("Observações:", observacoes)
+    diagnostico = f"Tipo de serviço: {tipo_servico}\nData: {data}\nHorário: {horario}\nDescrição: {descricao}"
+    if observacoes:
+        diagnostico += f"\nObservações: {observacoes}"
 
+    cursor.execute("""
+        INSERT INTO ordem (id_cliente, id_veiculo, tipo_ordem, diagnostico, abertura)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        id_cliente,
+        id_veiculo,
+        tipo,
+        diagnostico,
+        abertura
+    ))
+    conn.commit()
     return "Recebido (Agendamento)"

@@ -75,14 +75,8 @@
     }
 
     @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
 
     .form-section h2 {
@@ -170,25 +164,11 @@
     }
 
     @media (max-width: 768px) {
-        .pedir-hero h1 {
-            font-size: 2rem;
-        }
-
-        .service-tabs {
-            flex-direction: column;
-        }
-
-        .tab-button {
-            min-width: 100%;
-        }
-
-        .form-section {
-            padding: 1.5rem;
-        }
-
-        .form-row {
-            grid-template-columns: 1fr;
-        }
+        .pedir-hero h1 { font-size: 2rem; }
+        .service-tabs { flex-direction: column; }
+        .tab-button { min-width: 100%; }
+        .form-section { padding: 1.5rem; }
+        .form-row { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
@@ -203,15 +183,9 @@
 
 <div class="form-container">
     <div class="service-tabs">
-        <button class="tab-button active" onclick="showForm('troca-pecas')">
-        Troca de Peças
-        </button>
-        <button class="tab-button" onclick="showForm('emergencial')">
-            Serviço Emergencial
-        </button>
-        <button class="tab-button" onclick="showForm('agendamento')">
-            Agendamento
-        </button>
+        <button class="tab-button active" onclick="showForm('troca-pecas')">Troca de Peças</button>
+        <button class="tab-button" onclick="showForm('emergencial')">Serviço Emergencial</button>
+        <button class="tab-button" onclick="showForm('agendamento')">Agendamento</button>
     </div>
 
     <!-- Formulário: Troca de Peças -->
@@ -224,39 +198,27 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Nome Completo <span class="required">*</span></label>
-                    <input type="text" name="nome" required>
+                    <input type="text" name="nome" value="{{ cliente[1] }}" required>
                 </div>
                 <div class="form-group">
                     <label>Telefone <span class="required">*</span></label>
-                    <input type="tel" name="telefone" placeholder="(47) 99999-9999" required>
+                    <input type="tel" name="telefone" value="{{ cliente[3] }}" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Email <span class="required">*</span></label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" value="{{ cliente[4] }}" required>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Marca do Veículo <span class="required">*</span></label>
-                    <input type="text" name="marca" placeholder="Ex: Fiat, Volkswagen" required>
-                </div>
-                <div class="form-group">
-                    <label>Modelo <span class="required">*</span></label>
-                    <input type="text" name="modelo" placeholder="Ex: Uno, Gol" required>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Ano <span class="required">*</span></label>
-                    <input type="number" name="ano" placeholder="2020" min="1950" max="2025" required>
-                </div>
-                <div class="form-group">
-                    <label>Placa</label>
-                    <input type="text" name="placa" placeholder="ABC-1234">
-                </div>
+            <div class="form-group">
+                <label>Selecione seu veículo <span class="required">*</span></label>
+                <select name="id_veiculo" required>
+                    <option value="">Escolha seu veículo...</option>
+                    {% for v in veiculos %}
+                    <option value="{{ v[0] }}">{{ v[1] }} {{ v[2] }} - {{ v[3] }} ({{ v[4] }})</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="form-group">
@@ -288,39 +250,27 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Nome Completo <span class="required">*</span></label>
-                    <input type="text" name="nome" required>
+                    <input type="text" name="nome" value="{{ cliente[1] }}" required>
                 </div>
                 <div class="form-group">
                     <label>Telefone <span class="required">*</span></label>
-                    <input type="tel" name="telefone" placeholder="(47) 99999-9999" required>
+                    <input type="tel" name="telefone" value="{{ cliente[3] }}" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Email <span class="required">*</span></label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" value="{{ cliente[4] }}" required>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Marca do Veículo <span class="required">*</span></label>
-                    <input type="text" name="marca" placeholder="Ex: Fiat, Volkswagen" required>
-                </div>
-                <div class="form-group">
-                    <label>Modelo <span class="required">*</span></label>
-                    <input type="text" name="modelo" placeholder="Ex: Uno, Gol" required>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Ano <span class="required">*</span></label>
-                    <input type="number" name="ano" placeholder="2020" min="1950" max="2025" required>
-                </div>
-                <div class="form-group">
-                    <label>Placa</label>
-                    <input type="text" name="placa" placeholder="ABC-1234">
-                </div>
+            <div class="form-group">
+                <label>Selecione seu veículo <span class="required">*</span></label>
+                <select name="id_veiculo" required>
+                    <option value="">Escolha seu veículo...</option>
+                    {% for v in veiculos %}
+                    <option value="{{ v[0] }}">{{ v[1] }} {{ v[2] }} - {{ v[3] }} ({{ v[4] }})</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="form-group">
@@ -371,39 +321,27 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Nome Completo <span class="required">*</span></label>
-                    <input type="text" name="nome" required>
+                    <input type="text" name="nome" value="{{ cliente[1] }}" required>
                 </div>
                 <div class="form-group">
                     <label>Telefone <span class="required">*</span></label>
-                    <input type="tel" name="telefone" placeholder="(47) 99999-9999" required>
+                    <input type="tel" name="telefone" value="{{ cliente[3] }}" required>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>Email <span class="required">*</span></label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" value="{{ cliente[4] }}" required>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Marca do Veículo <span class="required">*</span></label>
-                    <input type="text" name="marca" placeholder="Ex: Fiat, Volkswagen" required>
-                </div>
-                <div class="form-group">
-                    <label>Modelo <span class="required">*</span></label>
-                    <input type="text" name="modelo" placeholder="Ex: Uno, Gol" required>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Ano <span class="required">*</span></label>
-                    <input type="number" name="ano" placeholder="2020" min="1950" max="2025" required>
-                </div>
-                <div class="form-group">
-                    <label>Placa</label>
-                    <input type="text" name="placa" placeholder="ABC-1234">
-                </div>
+            <div class="form-group">
+                <label>Selecione seu veículo <span class="required">*</span></label>
+                <select name="id_veiculo" required>
+                    <option value="">Escolha seu veículo...</option>
+                    {% for v in veiculos %}
+                    <option value="{{ v[0] }}">{{ v[1] }} {{ v[2] }} - {{ v[3] }} ({{ v[4] }})</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="form-group">
@@ -461,18 +399,13 @@
 
 <script>
 function showForm(formId) {
-    // Esconde todos os formulários
     const forms = document.querySelectorAll('.form-section');
     forms.forEach(form => form.classList.remove('active'));
     
-    // Remove a classe active de todos os botões
     const buttons = document.querySelectorAll('.tab-button');
     buttons.forEach(button => button.classList.remove('active'));
     
-    // Mostra o formulário selecionado
     document.getElementById(formId).classList.add('active');
-    
-    // Adiciona a classe active no botão clicado
     event.target.classList.add('active');
 }
 </script>
