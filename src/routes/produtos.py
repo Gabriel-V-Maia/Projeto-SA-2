@@ -11,15 +11,16 @@ def get_product(id):
     cursor = db.cursor()
 
     cursor.execute('''
-        SELECT id_produto, nome, preco, stock, detalhes, categoria
+        SELECT id_produto, nome, preco, stock, detalhes, categoria, imagem
         FROM produtos
         WHERE id_produto = ?
     ''', (id,))  
 
     produto = cursor.fetchone()
+    
 
     if produto is None:
-        return jsonify({"erro": "Produto não encontrado"}), 404
+        return render_template('notfound.html')
 
     produto_dict = {
         "id": produto[0],
@@ -27,7 +28,8 @@ def get_product(id):
         "preco": produto[2],
         "stock": produto[3],
         "detalhes": produto[4],
-        "categoria": produto[5]
+        "categoria": produto[5],
+        "imagem": produto[6]
     }
 
     return render_template('produto_detalhe.html', produto=produto_dict)
