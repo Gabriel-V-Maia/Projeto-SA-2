@@ -133,27 +133,56 @@ def Inserir_dados():
     ''', veiculos)
 
     produtos = [
-        ('Óleo de motor', 50, 100, 'óleo_motor.jpg', 'Pecas', 'Óleo para motores de carros, ideal para troca de óleo.'),
-        ('Filtro de ar', 30, 200, 'filtro_ar.jpg', 'Pecas', 'Filtro de ar para manter o motor livre de impurezas.'),
-        ('Pastilha de freio', 70, 150, 'pastilha_freio.jpg', 'Pecas', 'Pastilhas de freio de alta performance, seguras e duráveis.'),
-        ('Pneu 205/55', 350, 120, 'pneu_205.jpg', 'Pecas', 'Pneu de alta resistência para carros de passeio.'),
-        ('Bateria 60Ah', 200, 80, 'bateria_60Ah.jpg', 'Pecas', 'Bateria automotiva de 60Ah, ideal para carros populares.'),
-        ('Amortecedor', 150, 60, 'amortecedor.jpg', 'Pecas', 'Amortecedor para melhorar a suspensão do veículo.'),
-        ('Farol de milha', 120, 90, 'farol_milha.jpg', 'Acessorios', 'Farol de milha para visibilidade em condições adversas.'),
-        ('Lâmpada halógena', 20, 250, 'lampada_halogenas.jpg', 'Acessorios', 'Lâmpada halógena com alta durabilidade e luminosidade.'),
-        ('Capa de banco', 50, 300, 'capa_banco.jpg', 'Acessorios', 'Capa protetora para bancos de carro, disponível em várias cores.'),
-        ('Alarme', 100, 80, 'alarme.jpg', 'Acessorios', 'Sistema de alarme automotivo com sensores de movimento e distância.'),
-        ('Cinto de segurança', 40, 120, 'cinto_segurança.jpg', 'Acessorios', 'Cinto de segurança confortável e com ajuste de tamanho.'),
-        ('Mola de suspensão', 100, 75, 'mola_suspensao.jpg', 'Pecas', 'Mola de suspensão de alta resistência para estabilidade do veículo.'),
-        ('Catalisador', 300, 50, 'catalisador.jpg', 'Pecas', 'Catalisador para reduzir as emissões de poluentes do veículo.'),
-        ('Sensor de estacionamento', 150, 100, 'sensor_estacionamento.jpg', 'Acessorios', 'Sensor de estacionamento com alerta sonoro para facilitar manobras.'),
-        ('Radiador', 250, 60, 'radiador.jpg', 'Pecas', 'Radiador de alta performance para controle da temperatura do motor.'),
-        ('Ventoinha', 90, 200, 'ventoinha.jpg', 'Pecas', 'Ventoinha para resfriamento eficiente do sistema de arrefecimento do motor.'),
-        ('Cárter', 180, 70, 'carter.jpg', 'Pecas', 'Cárter para proteção do motor e armazenamento de óleo lubrificante.'),
-        ('Difusor', 60, 110, 'difusor.jpg', 'Acessorios', 'Difusor de ar para melhorar a circulação do ar no interior do veículo.'),
-        ('Tampa de válvula', 50, 150, 'tampa_valvula.jpg', 'Pecas', 'Tampa de válvula para vedação do motor e prevenção de vazamentos.'),
-        ('Coxim de motor', 120, 80, 'coxim_motor.jpg', 'Pecas', 'Coxim de motor para redução de vibrações e ruídos no veículo.')
+    (
+        'Óleo de motor',
+        50,
+        100,
+        'https://www.profiautos.com.br/novosite/wp-content/uploads/2017/05/TROCA-DE-600x400.jpg',
+        'Pecas',
+        'Óleo para motores de carros, ideal para troca de óleo.'
+    ),
+    (
+        'Filtro de ar',
+        30,
+        200,
+        'https://images.cws.digital/produtos/gg/34/51/filtro-de-ar-10075134-1675716012938.jpg',
+        'Pecas',
+        'Filtro de ar para manter o motor livre de impurezas.'
+    ),
+    (
+        'Pastilha de freio',
+        70,
+        150,
+        'https://www.horuspecas.com.br/media/catalog/product/cache/1/image/600x400.8/9df78eab33525d08d6e5fb8d27136e95/1/2/1272.jpg',
+        'Pecas',
+        'Pastilhas de freio de alta performance, seguras e duráveis.'
+    ),
+    (
+        'Pneu 205/55',
+        350,
+        120,
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1y3yHoBYkHV8xShhgFzkGqAvNVpFpIHQdQ&s',
+        'Pecas',
+        'Pneu de alta resistência para carros de passeio.'
+    ),
+    (
+        'Bateria 60Ah',
+        200,
+        80,
+        'https://cdn.awsli.com.br/2500x2500/515/515778/produto/19478716/9aea91eed0.jpg',
+        'Pecas',
+        'Bateria automotiva de 60Ah, ideal para carros populares.'
+    ),
+    (
+        'Amortecedor',
+        150,
+        60,
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKySigx4BgpFP6KlqUzyHRuPy0YQDwoMvUGg&s',
+        'Pecas',
+        'Amortecedor para melhorar a suspensão do veículo.'
+    ),
     ]
+
     
     cursor.executemany(''' 
         INSERT INTO produtos (nome, preco, stock, imagem, categoria, detalhes)
