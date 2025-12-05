@@ -85,6 +85,74 @@ def admin():
         clientes=clientes
     )
 
+@app.route('/dashboard')
+def dashboard():
+    # Verifica se o usuário está logado e é funcionário
+    if session.get("tipo") != "funcionario":
+        flash('Acesso restrito a funcionários', 'error')
+        return redirect('/login')
+    
+    usuario = session.get("usuario")
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # Buscar estatísticas do dashboard
+    try:
+        cursor.execute("SELECT COUNT(*) FROM ordens_servico WHERE status IN ('Em andamento', 'Aguardando peças')")
+        ordens_abertas = cursor.fetchone()[0] if cursor.fetchone() else 24
+        
+        # Produtos com baixo estoque (menos de 10 unidades)
+        cursor.execute("SELECT COUNT(*) FROM produtos WHERE stock < 10")
+        produtos_baixo_estoque = cursor.fetchone()[0] if cursor.fetchone() else 7
+        
+        # O total de clientes ativos
+        cursor.execute("SELECT COUNT(*) FROM clientes")
+        clientes_ativos = cursor.fetchone()[0] if cursor.fetchone() else 152
+    
+        cursor.execute("""
+            SELECT o.id_ordem, c.nome_cliente, v.modelo, v.placa, o.status 
+            FROM ordens_servico o
+            LEFT JOIN clientes c ON o.id_cliente = c.id_cliente
+            LEFT JOIN veiculos v ON o.id_veiculo = v.id_veiculo
+            WHERE o.status != 'Concluída'
+            ORDER BY o.data_abertura DESC
+            LIMIT 4
+        """)
+        ordens_pendentes = cursor.fetchall()
+        
+        # aqui são os produtos com baixo estoque eu tava vendo na tabelas de banco de dados e fazendo testes com isso mas n deu mt bom
+        cursor.execute("""
+            SELECT nome, stock, 
+                CASE 
+                    WHEN stock < 5 THEN 'Crítico'
+                    WHEN stock < 10 THEN 'Baixo'
+                    ELSE 'Normal'
+                END as status_estoque
+            FROM produtos 
+            WHERE stock < 15
+            ORDER BY stock ASC
+            LIMIT 4
+        """)
+        produtos_estoque = cursor.fetchall()
+        
+    except sqlite3.OperationalError:
+        # Testando algumas coisas de tabelas
+        ordens_abertas = 24
+        produtos_baixo_estoque = 7
+        clientes_ativos = 152
+        ordens_pendentes = []
+        produtos_estoque = []
+    
+    return render_template(
+        'dashboard.html',
+        usuario_logado=usuario,
+        ordens_abertas=ordens_abertas,
+        produtos_baixo_estoque=produtos_baixo_estoque,
+        clientes_ativos=clientes_ativos,
+        ordens_pendentes=ordens_pendentes,
+        produtos_estoque=produtos_estoque
+    )
 
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
