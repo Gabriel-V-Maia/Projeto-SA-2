@@ -22,6 +22,11 @@
         <div class="page-header">
             <h1>Gerenciar Funcionários</h1>
             <p>Visualize e edite informações de funcionários</p>
+
+            <!-- BOTÃO DE ADICIONAR -->
+            <a href="/admin/adicionar/funcionario" class="btn-primary" style="margin-top: 1rem; display:inline-block;">
+                + Adicionar Funcionário
+            </a>
         </div>
 
         <div class="table-container">
@@ -55,7 +60,14 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="/admin/funcionarios/editar/{{ funcionario[0] }}" class="btn-action btn-edit">Editar</a>
+                            <a href="/admin/editar/funcionario/{{ funcionario[0] }}" class="btn-action btn-edit">Editar</a>
+
+                            <!-- BOTÃO DELETAR -->
+                            <a href="/admin/deletar/funcionario/{{ funcionario[0] }}" 
+                               class="btn-action btn-delete"
+                               onclick="return confirm('Tem certeza que deseja excluir este funcionário?')">
+                               Excluir
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -286,6 +298,18 @@
 
         .btn-edit:hover {
             background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* ESTILO DO BOTÃO DELETAR */
+        .btn-delete {
+            background: #555;
+            color: white;
+            margin-left: 0.5rem;
+        }
+
+        .btn-delete:hover {
+            background: #333;
             transform: translateY(-2px);
         }
 

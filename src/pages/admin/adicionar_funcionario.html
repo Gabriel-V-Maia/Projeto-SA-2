@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Funcionário - Automax</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/admin/admin" class="logo">
+                <span class="logo-auto">Auto</span><span class="logo-max">Max</span>
+            </a>
+            <div class="header-actions">
+                <a href="/admin/funcionarios" class="btn btn-outline">← Voltar</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-card">
+            <h1>Novo Funcionário</h1>
+            <p class="subtitle">Cadastre um colaborador e defina seu nível de acesso</p>
+
+            <form method="POST" class="edit-form">
+                <div class="form-group">
+                    <label>Nome do Funcionário</label>
+                    <input type="text" name="nome" placeholder="Digite o nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nível de Acesso</label>
+                    <select name="nivel" required>
+                        <option value="" disabled selected>Selecione...</option>
+                        <option value="1">Nível 1 - Mecânico</option>
+                        <option value="2">Nível 2 - Recepcionista</option>
+                        <option value="3">Nível 3 - Gerente</option>
+                    </select>
+                </div>
+
+                <div class="permissions-info">
+                    <h3>Permissões por Nível</h3>
+                    <div class="permission-grid">
+
+                        <div class="permission-card">
+                            <div class="permission-level">Nível 1</div>
+                            <div class="permission-title">Mecânico</div>
+                            <ul>
+                                <li>Visualizar ordens de serviço</li>
+                                <li>Visualizar e atualizar estoque</li>
+                            </ul>
+                        </div>
+
+                        <div class="permission-card">
+                            <div class="permission-level">Nível 2</div>
+                            <div class="permission-title">Recepcionista</div>
+                            <ul>
+                                <li>Visualizar ordens de serviço</li>
+                                <li>Gerenciar clientes (nome, CPF, telefone, carros)</li>
+                            </ul>
+                        </div>
+
+                        <div class="permission-card">
+                            <div class="permission-level">Nível 3</div>
+                            <div class="permission-title">Gerente</div>
+                            <ul>
+                                <li>Acesso total ao sistema</li>
+                                <li>Gerenciar funcionários</li>
+                                <li>Gerenciar clientes, ordens e estoque</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha Inicial</label>
+                    <input type="password" name="senha" placeholder="Defina uma senha" required>
+                </div>
+
+                <div class="form-actions">
+                    <a href="/admin/funcionarios" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Criar Funcionário</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        :root {
+            --primary: #D32F2F;
+            --primary-dark: #B71C1C;
+            --secondary: #1A1A1A;
+            --background: #FFFFFF;
+            --surface: #F5F5F5;
+            --text: #212121;
+            --text-light: #757575;
+            --border: #E0E0E0;
+            --success: #4CAF50;
+            --info: #2196F3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--surface);
+            color: var(--text);
+        }
+
+        .header {
+            background-color: var(--background);
+            border-bottom: 2px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-decoration: none;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        .logo-auto { color: var(--secondary); }
+        .logo-max { color: var(--primary); }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text);
+            border-color: var(--border);
+        }
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+
+        .btn-secondary {
+            background-color: var(--surface);
+            color: var(--text);
+            border-color: var(--border);
+        }
+        .btn-secondary:hover { background-color: var(--border); }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-card h1 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .permissions-info {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .permission-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 2px solid var(--border);
+        }
+
+        .permission-level {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .permission-title {
+            font-weight: 700;
+            color: var(--secondary);
+            margin-top: 0.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .permission-card ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .permission-card li {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .permission-card li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border);
+        }
+    </style>
+</body>
+</html>

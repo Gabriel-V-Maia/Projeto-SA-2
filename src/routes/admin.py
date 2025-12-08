@@ -325,3 +325,43 @@ def editar_funcionario(id_funcionario):
                          funcionario=funcionario, 
                          nivel_acesso=nivel_acesso,
                          usuario_logado=session.get("usuario"))
+
+@app.route("/admin/adicionar/funcionario", methods=["GET", "POST"])
+def adicionar_funcionario():
+    if session.get("nivel_acesso") != '3':
+        return redirect("/dashboard")
+
+    if request.method == "POST":
+        nome = request.form["nome"]
+        senha = request.form["senha"]
+        nivel = request.form["nivel"]
+
+        senha_hash = bcrypt.hashpw(senha.encode("utf-8"), bcrypt.gensalt())
+
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO funcionarios (nome_funcionario, senha, nivel_de_acesso) VALUES (?, ?, ?)",
+            (nome, senha_hash, nivel)
+        )
+        conn.commit()
+
+        return redirect("/admin/funcionarios")
+
+    return render_template("admin/adicionar_funcionario.html")
+
+@app.route("/admin/deletar/funcionario/<int:id_funcionario>")
+def deletar_funcionario(id_funcionario):
+    if session.get("nivel_acesso") != '3':
+        return redirect("/dashboard")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM funcionarios WHERE id_funcionario = ?",
+        (id_funcionario,)
+    )
+    conn.commit()
+
+    return redirect("/admin/funcionarios")
