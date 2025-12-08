@@ -3,83 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Funcionário - Automax</title>
+    <title>Editar Cliente - Automax</title>
 </head>
 <body>
     <header class="header">
         <div class="header-content">
-            <a href="/dashboard" class="logo">
+            <a href="/admin/admin" class="logo">
                 <span class="logo-auto">Auto</span><span class="logo-max">Max</span>
             </a>
             <div class="header-actions">
-                <a href="/admin/funcionarios" class="btn btn-outline">← Voltar</a>
+                <a href="/admin/clientes" class="btn btn-outline">← Voltar</a>
             </div>
         </div>
     </header>
 
     <div class="container">
         <div class="form-card">
-            <h1>Editar Funcionário</h1>
-            <p class="subtitle">Atualize informações e permissões</p>
+            <h1>Editar Cliente</h1>
+            <p class="subtitle">Informações do cliente {{ cliente[1] }}</p>
 
             <form method="POST" class="edit-form">
                 <div class="form-group">
-                    <label>Nome do Funcionário</label>
-                    <input type="text" name="nome" value="{{ funcionario[2] }}" required>
+                    <label>Nome Completo</label>
+                    <input type="text" name="nome" value="{{ cliente[1] }}" required>
                 </div>
 
-                <div class="form-group">
-                    <label>Nível de Acesso</label>
-                    <select name="nivel" required>
-                        <option value="1" {% if funcionario[3] == '1' %}selected{% endif %}>Nível 1 - Mecânico</option>
-                        <option value="2" {% if funcionario[3] == '2' %}selected{% endif %}>Nível 2 - Recepcionista</option>
-                        <option value="3" {% if funcionario[3] == '3' %}selected{% endif %}>Nível 3 - Gerente</option>
-                    </select>
-                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CPF</label>
+                        <input type="text" name="cpf" value="{{ cliente[2] }}" required>
+                    </div>
 
-                <div class="permissions-info">
-                    <h3>Permissões por Nível</h3>
-                    <div class="permission-grid">
-                        <div class="permission-card">
-                            <div class="permission-level">Nível 1</div>
-                            <div class="permission-title">Mecânico</div>
-                            <ul>
-                                <li>Visualizar ordens de serviço</li>
-                                <li>Visualizar e atualizar estoque</li>
-                            </ul>
-                        </div>
-
-                        <div class="permission-card">
-                            <div class="permission-level">Nível 2</div>
-                            <div class="permission-title">Recepcionista</div>
-                            <ul>
-                                <li>Visualizar ordens de serviço</li>
-                                <li>Gerenciar clientes (nome, CPF, telefone, carros)</li>
-                            </ul>
-                        </div>
-
-                        <div class="permission-card">
-                            <div class="permission-level">Nível 3</div>
-                            <div class="permission-title">Gerente</div>
-                            <ul>
-                                <li>Acesso total ao sistema</li>
-                                <li>Gerenciar funcionários</li>
-                                <li>Gerenciar clientes, ordens e estoque</li>
-                            </ul>
-                        </div>
+                    <div class="form-group">
+                        <label>Celular</label>
+                        <input type="text" name="celular" value="{{ cliente[3] }}" required>
                     </div>
                 </div>
 
+                {% if nivel_acesso == '3' %}
                 <div class="form-group">
-                    <label>Nova Senha (deixe em branco para manter a atual)</label>
-                    <input type="password" name="senha" placeholder="Digite a nova senha">
-                    <small style="color: var(--text-light); font-size: 0.85rem;">
-                        Preencha apenas se desejar alterar a senha
-                    </small>
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ cliente[4] }}" required>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" value="{{ cliente[4] }}" disabled>
+                    <small style="color: var(--text-light); font-size: 0.85rem;">Apenas gerentes podem editar o email</small>
+                </div>
+                {% endif %}
+
+                <div class="section-title">Veículos Cadastrados</div>
+                <div class="vehicles-list">
+                    {% if veiculos %}
+                        {% for veiculo in veiculos %}
+                        <div class="vehicle-card">
+                            <div><strong>{{ veiculo[4] }}</strong> - {{ veiculo[1] }} {{ veiculo[5] }}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-light);">
+                                {{ veiculo[6] }} | Cor: {{ veiculo[2] }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color: var(--text-light);">Nenhum veículo cadastrado</p>
+                    {% endif %}
                 </div>
 
                 <div class="form-actions">
-                    <a href="/admin/funcionarios" class="btn btn-secondary">Cancelar</a>
+                    <a href="/admin/clientes" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                 </div>
             </form>
@@ -96,8 +87,6 @@
             --text: #212121;
             --text-light: #757575;
             --border: #E0E0E0;
-            --success: #4CAF50;
-            --info: #2196F3;
         }
 
         * {
@@ -218,6 +207,12 @@
             gap: 1.5rem;
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
         .form-group {
             display: flex;
             flex-direction: column;
@@ -230,8 +225,7 @@
             font-size: 0.95rem;
         }
 
-        .form-group input,
-        .form-group select {
+        .form-group input {
             padding: 0.75rem;
             border: 2px solid var(--border);
             border-radius: 6px;
@@ -240,73 +234,36 @@
             transition: border-color 0.3s ease;
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
+        .form-group input:focus {
             outline: none;
             border-color: var(--primary);
         }
 
-        .permissions-info {
-            background: var(--surface);
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1rem 0;
+        .form-group input:disabled {
+            background-color: var(--surface);
+            color: var(--text-light);
         }
 
-        .permissions-info h3 {
-            color: var(--secondary);
-            margin-bottom: 1rem;
+        .section-title {
             font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border);
         }
 
-        .permission-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        .vehicles-list {
+            display: flex;
+            flex-direction: column;
             gap: 1rem;
         }
 
-        .permission-card {
-            background: white;
+        .vehicle-card {
+            background: var(--surface);
             padding: 1rem;
-            border-radius: 6px;
+            border-radius: 8px;
             border: 2px solid var(--border);
-        }
-
-        .permission-level {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
-        }
-
-        .permission-title {
-            font-weight: 700;
-            color: var(--secondary);
-            margin-bottom: 0.75rem;
-        }
-
-        .permission-card ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .permission-card li {
-            font-size: 0.85rem;
-            color: var(--text-light);
-            padding-left: 1rem;
-            position: relative;
-        }
-
-        .permission-card li:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: var(--primary);
-            font-weight: bold;
         }
 
         .form-actions {
@@ -319,7 +276,7 @@
         }
 
         @media (max-width: 768px) {
-            .permission-grid {
+            .form-row {
                 grid-template-columns: 1fr;
             }
         }

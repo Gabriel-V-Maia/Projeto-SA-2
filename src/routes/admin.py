@@ -4,121 +4,11 @@ import bcrypt
 import sqlite3
 from datetime import datetime
 
-@app.route('/admin')
-@app.route('/dashboard')
-def dashboard():
-    if session.get("tipo") != "funcionario":
-        flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
-    
-    usuario = session.get("usuario")
-    nivel_acesso = session.get("nivel_acesso", "1")
-    
-    conn = get_db()
-    cursor = conn.cursor()
-    
-    try:
-        cursor.execute("SELECT COUNT(*) FROM ordem WHERE status IN ('EM ANDAMENTO', 'AGUARDANDO PEÇA', 'EM ABERTO')")
-        ordens_abertas = cursor.fetchone()[0] or 0
-
-        cursor.execute("SELECT COUNT(*) FROM produtos WHERE stock < 10")
-        produtos_baixo_estoque = cursor.fetchone()[0] or 0
-
-        cursor.execute("SELECT COUNT(*) FROM clientes")
-        clientes_ativos = cursor.fetchone()[0] or 0
-
-        cursor.execute("""
-            SELECT 
-                strftime('%Y-%m', o.abertura) as mes,
-                SUM(o.orcamento) as receita
-            FROM ordem o
-            WHERE o.abertura IS NOT NULL 
-            AND o.abertura >= date('now', '-6 months')
-            GROUP BY strftime('%Y-%m', o.abertura)
-            ORDER BY mes
-        """)
-        receita_mensal = cursor.fetchall()
-
-        meses = []
-        receitas = []
-        for row in receita_mensal:
-            if row[0]:
-                mes_formatado = datetime.strptime(row[0], '%Y-%m').strftime('%b')
-                meses.append(mes_formatado)
-                receitas.append(float(row[1]) if row[1] else 0)
-
-        while len(meses) < 6:
-            meses.insert(0, '')
-            receitas.insert(0, 0)
-
-        receita_mes_atual = receitas[-1] if receitas else 0
-
-        cursor.execute("""
-            SELECT o.id_ordem, c.nome_cliente, v.modelo, v.placa, o.status 
-            FROM ordem o
-            LEFT JOIN clientes c ON o.id_cliente = c.id_cliente
-            LEFT JOIN veiculos v ON o.id_veiculo = v.id_veiculo
-            WHERE o.status != 'CONCLUIDO'
-            ORDER BY o.abertura DESC
-            LIMIT 4
-        """)
-        ordens_pendentes = cursor.fetchall()
-        
-        cursor.execute("""
-            SELECT nome, stock, 
-                CASE 
-                    WHEN stock < 5 THEN 'Crítico'
-                    WHEN stock < 10 THEN 'Baixo'
-                    ELSE 'Normal'
-                END as status_estoque
-            FROM produtos 
-            WHERE stock < 15
-            ORDER BY stock ASC
-            LIMIT 4
-        """)
-        produtos_estoque = cursor.fetchall()
-
-        cursor.execute("""
-            SELECT o.id_ordem, c.nome_cliente, o.tipo_ordem, o.abertura
-            FROM ordem o
-            LEFT JOIN clientes c ON o.id_cliente = c.id_cliente
-            ORDER BY o.abertura DESC
-            LIMIT 5
-        """)
-        atividades_recentes = cursor.fetchall()
-        
-    except sqlite3.Error as e:
-        print(f"Erro no banco: {e}")
-        ordens_abertas = 0
-        produtos_baixo_estoque = 0
-        clientes_ativos = 0
-        meses = ['Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
-        receitas = [32000, 28500, 35000, 41000, 37200, 45800]
-        receita_mes_atual = 45800
-        ordens_pendentes = []
-        produtos_estoque = []
-        atividades_recentes = []
-    
-    return render_template(
-        'dashboard.html',
-        usuario_logado=usuario,
-        nivel_acesso=nivel_acesso,
-        ordens_abertas=ordens_abertas,
-        produtos_baixo_estoque=produtos_baixo_estoque,
-        clientes_ativos=clientes_ativos,
-        receita_mes_atual=receita_mes_atual,
-        meses=meses,
-        receitas=receitas,
-        ordens_pendentes=ordens_pendentes,
-        produtos_estoque=produtos_estoque,
-        atividades_recentes=atividades_recentes
-    )
-
 @app.route('/admin/ordens')
 def admin_ordens():
     if session.get("tipo") != "funcionario":
         flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
+        return redirect('/auth/login')
     
     nivel_acesso = session.get("nivel_acesso", "1")
     conn = get_db()
@@ -134,16 +24,16 @@ def admin_ordens():
     """)
     ordens = cursor.fetchall()
     
-    return render_template('admin_ordens.html', 
+    return render_template('admin/admin_ordens.html', 
                          ordens=ordens, 
                          nivel_acesso=nivel_acesso,
                          usuario_logado=session.get("usuario"))
 
-@app.route('/admin/ordens/editar/<int:id_ordem>', methods=['GET', 'POST'])
+@app.route('/admin/editar/ordem/<int:id_ordem>', methods=['GET', 'POST'])
 def editar_ordem(id_ordem):
     if session.get("tipo") != "funcionario":
         flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
+        return redirect('/auth/login')
     
     nivel_acesso = session.get("nivel_acesso", "1")
     conn = get_db()
@@ -183,7 +73,7 @@ def editar_ordem(id_ordem):
     """, (id_ordem,))
     ordem = cursor.fetchone()
     
-    return render_template('editar_ordem.html', 
+    return render_template('editar/ordem.html', 
                          ordem=ordem, 
                          nivel_acesso=nivel_acesso,
                          usuario_logado=session.get("usuario"))
@@ -192,7 +82,7 @@ def editar_ordem(id_ordem):
 def admin_clientes():
     if session.get("tipo") != "funcionario":
         flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
+        return redirect('/auth/login')
     
     nivel_acesso = session.get("nivel_acesso", "1")
     
@@ -213,16 +103,16 @@ def admin_clientes():
     """)
     clientes = cursor.fetchall()
     
-    return render_template('admin_clientes.html', 
+    return render_template('admin/admin_clientes.html', 
                          clientes=clientes, 
                          nivel_acesso=nivel_acesso,
                          usuario_logado=session.get("usuario"))
 
-@app.route('/admin/clientes/editar/<int:id_cliente>', methods=['GET', 'POST'])
+@app.route('/admin/editar/cliente/<int:id_cliente>', methods=['GET', 'POST'])
 def editar_cliente(id_cliente):
     if session.get("tipo") != "funcionario":
         flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
+        return redirect('/auth/login')
     
     nivel_acesso = session.get("nivel_acesso", "1")
     
@@ -271,7 +161,7 @@ def editar_cliente(id_cliente):
     cursor.execute("SELECT * FROM veiculos WHERE id_cliente=?", (id_cliente,))
     veiculos = cursor.fetchall()
     
-    return render_template('editar_cliente.html', 
+    return render_template('editar/cliente.html', 
                          cliente=cliente, 
                          veiculos=veiculos,
                          nivel_acesso=nivel_acesso,
@@ -281,7 +171,7 @@ def editar_cliente(id_cliente):
 def admin_estoque():
     if session.get("tipo") != "funcionario":
         flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
+        return redirect('/auth/login')
     
     nivel_acesso = session.get("nivel_acesso", "1")
     conn = get_db()
@@ -294,16 +184,16 @@ def admin_estoque():
     """)
     produtos = cursor.fetchall()
     
-    return render_template('admin_estoque.html', 
+    return render_template('admin/admin_estoque.html', 
                          produtos=produtos, 
                          nivel_acesso=nivel_acesso,
                          usuario_logado=session.get("usuario"))
 
-@app.route('/admin/estoque/editar/<int:id_produto>', methods=['GET', 'POST'])
+@app.route('/admin/editar/estoque/<int:id_produto>', methods=['GET', 'POST'])
 def editar_estoque(id_produto):
     if session.get("tipo") != "funcionario":
         flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
+        return redirect('/auth/login')
     
     nivel_acesso = session.get("nivel_acesso", "1")
     
@@ -349,7 +239,7 @@ def editar_estoque(id_produto):
     cursor.execute("SELECT * FROM produtos WHERE id_produto=?", (id_produto,))
     produto = cursor.fetchone()
     
-    return render_template('editar_estoque.html', 
+    return render_template('editar/estoque.html', 
                          produto=produto, 
                          nivel_acesso=nivel_acesso,
                          usuario_logado=session.get("usuario"))
@@ -358,7 +248,7 @@ def editar_estoque(id_produto):
 def admin_funcionarios():
     if session.get("tipo") != "funcionario":
         flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
+        return redirect('/auth/login')
     
     nivel_acesso = session.get("nivel_acesso", "1")
     
@@ -376,16 +266,16 @@ def admin_funcionarios():
     """)
     funcionarios = cursor.fetchall()
     
-    return render_template('admin_funcionarios.html', 
+    return render_template('admin/admin_funcionarios.html', 
                          funcionarios=funcionarios, 
                          nivel_acesso=nivel_acesso,
                          usuario_logado=session.get("usuario"))
 
-@app.route('/admin/funcionarios/editar/<int:id_funcionario>', methods=['GET', 'POST'])
+@app.route('/admin/editar/funcionario/<int:id_funcionario>', methods=['GET', 'POST'])
 def editar_funcionario(id_funcionario):
     if session.get("tipo") != "funcionario":
         flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
+        return redirect('/auth/login')
     
     nivel_acesso = session.get("nivel_acesso", "1")
     
@@ -422,7 +312,7 @@ def editar_funcionario(id_funcionario):
         cursor.execute("""
             INSERT INTO logs (id_funcionario, detalhe, momento_acao)
             VALUES (?, ?, ?)
-        """, (id_func_logado, f'Atualizo    u funcionário {nome}', momento))
+        """, (id_func_logado, f'Atualizou funcionário {nome}', momento))
         conn.commit()
         
         flash('Funcionário atualizado com sucesso!', 'success')
@@ -431,7 +321,7 @@ def editar_funcionario(id_funcionario):
     cursor.execute("SELECT * FROM funcionarios WHERE id_funcionario=?", (id_funcionario,))
     funcionario = cursor.fetchone()
     
-    return render_template('editar_funcionario.html', 
+    return render_template('editar/funcionario.html', 
                          funcionario=funcionario, 
                          nivel_acesso=nivel_acesso,
                          usuario_logado=session.get("usuario"))

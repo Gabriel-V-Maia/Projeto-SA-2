@@ -32,6 +32,7 @@ def close_connection(exception):
 # NÃO MOVA AS DUAS LINHAS ABAIXO OU TUDO QUEBRA!
 from routes import home 
 from routes import produtos
+from routes import admin
 
 
 if __name__ == "__main__":

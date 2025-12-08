@@ -398,7 +398,7 @@
     <header class="header">
         <div class="header-content">
             <div style="display: flex; align-items: center; gap: 1rem;">
-                <a href="/" class="logo">
+                <a href="/admin" class="logo">
                     <span class="logo-auto">Auto</span><span class="logo-max">Max</span>
                 </a>
                 <span class="user-badge">{{ usuario_logado }}</span>
@@ -425,7 +425,7 @@
                         <div class="stat-title">Ordens Abertas</div>
                     </div>
                 </div>
-                <div cla    ss="stat-value">{{ ordens_abertas }}</div>
+                <div class="stat-value">{{ ordens_abertas }}</div>
                 <div class="stat-label">Ordens de serviço em andamento</div>
             </div>
 
@@ -519,7 +519,7 @@
                                 {% endif %}
                             </td>
                         </tr>
-                        {% endfor %}
+                        {% endfor %} 
                     </tbody>
                 </table>
             </div>
@@ -561,9 +561,8 @@
         </div>
     </div>
 
-    <script>
+    <script>        
         const ctx = document.getElementById('revenueChart').getContext('2d');
-        
         const revenueData = {
             labels: {{ meses|tojson }},
             datasets: [{

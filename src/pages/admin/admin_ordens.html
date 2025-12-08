@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Estoque - Automax</title>
+    <title>Gerenciar Ordens - Automax</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
 </head>
 <body>
     <header class="header">
         <div class="header-content">
-            <a href="/dashboard" class="logo">
+            <a href="/admin/admin" class="logo">
                 <span class="logo-auto">Auto</span><span class="logo-max">Max</span>
             </a>
             <div class="header-actions">
-                <a href="/dashboard" class="btn btn-outline">← Dashboard</a>
+                <a href="/admin/admin" class="btn btn-outline">← Dashboard</a>
                 <a href="/logout" class="btn btn-primary">Sair</a>
             </div>
         </div>
@@ -20,8 +21,8 @@
 
     <div class="container">
         <div class="page-header">
-            <h1>Gerenciar Estoque</h1>
-            <p>Visualize e atualize o estoque de produtos</p>
+            <h1>Gerenciar Ordens de Serviço</h1>
+            <p>Visualize e edite ordens de serviço</p>
         </div>
 
         <div class="table-container">
@@ -29,35 +30,39 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Produto</th>
-                        <th>Preço</th>
-                        <th>Estoque</th>
-                        <th>Categoria</th>
+                        <th>Cliente</th>
+                        <th>Veículo</th>
+                        <th>Tipo</th>
                         <th>Status</th>
+                        <th>Data Abertura</th>
+                        <th>Orçamento</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for produto in produtos %}
+                    {% for ordem in ordens %}
                     <tr>
-                        <td>{{ produto[0] }}</td>
-                        <td>{{ produto[1] }}</td>
-                        <td>R$ {{ "%.2f"|format(produto[2]) }}</td>
-                        <td class="{% if produto[3] < 5 %}stock-critical{% elif produto[3] < 10 %}stock-low{% else %}stock-ok{% endif %}">
-                            {{ produto[3] }} un.
-                        </td>
-                        <td>{{ produto[4] }}</td>
+                        <td>#{{ ordem[0] }}</td>
+                        <td>{{ ordem[1] }}</td>
+                        <td>{{ ordem[2] }} - {{ ordem[3] }}</td>
+                        <td>{{ ordem[4] }}</td>
                         <td>
-                            {% if produto[3] < 5 %}
-                            <span class="badge badge-error">Crítico</span>
-                            {% elif produto[3] < 10 %}
-                            <span class="badge badge-warning">Baixo</span>
+                            {% if ordem[5] == 'CONCLUIDO' %}
+                            <span class="badge badge-success">{{ ordem[5] }}</span>
+                            {% elif ordem[5] == 'EM ANDAMENTO' %}
+                            <span class="badge badge-warning">{{ ordem[5] }}</span>
+                            {% elif ordem[5] == 'AGUARDANDO PEÇA' %}
+                            <span class="badge badge-info">{{ ordem[5] }}</span>
+                            {% elif ordem[5] == 'CANCELADO' %}
+                            <span class="badge badge-error">{{ ordem[5] }}</span>
                             {% else %}
-                            <span class="badge badge-success">Normal</span>
+                            <span class="badge badge-default">{{ ordem[5] }}</span>
                             {% endif %}
                         </td>
+                        <td>{{ ordem[6][:10] if ordem[6] else '-' }}</td>
+                        <td>R$ {{ "%.2f"|format(ordem[7]) if ordem[7] else '0.00' }}</td>
                         <td>
-                            <a href="/admin/estoque/editar/{{ produto[0] }}" class="btn-action btn-edit">Editar</a>
+                            <a href="/admin/editar/ordem/{{ ordem[0] }}" class="btn-action btn-edit">Editar</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -216,21 +221,6 @@
             background-color: var(--surface);
         }
 
-        .stock-critical {
-            color: var(--error);
-            font-weight: 700;
-        }
-
-        .stock-low {
-            color: var(--warning);
-            font-weight: 700;
-        }
-
-        .stock-ok {
-            color: var(--success);
-            font-weight: 600;
-        }
-
         .badge {
             display: inline-block;
             padding: 0.35rem 0.75rem;
@@ -252,6 +242,16 @@
         .badge-error {
             background: rgba(244, 67, 54, 0.1);
             color: var(--error);
+        }
+
+        .badge-info {
+            background: rgba(33, 150, 243, 0.1);
+            color: #2196F3;
+        }
+
+        .badge-default {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text);
         }
 
         .btn-action {

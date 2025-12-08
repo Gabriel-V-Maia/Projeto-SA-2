@@ -3,7 +3,6 @@
 {% block extra_css %}
 <style>
 
-    /* --- Layout geral --- */
     body {
         background: linear-gradient(135deg, #f5f5f5, #ebebeb);
     }
@@ -18,7 +17,7 @@
         padding: 0 1.5rem;
     }
 
-    /* --- Imagem do produto --- */
+    /* --- img --- */
     .produto-imagem {
         width: 100%;
         aspect-ratio: 1;
@@ -34,7 +33,6 @@
         box-shadow: 0 25px 60px rgba(0,0,0,0.22);
     }
 
-    /* --- Título e categoria --- */
     .categoria {
         display: inline-block;
         background: var(--primary);
@@ -55,7 +53,7 @@
         line-height: 1.2;
     }
 
-    /* --- Preço --- */
+   
     .preco {
         font-size: 3.9rem;
         font-weight: 900;
@@ -71,7 +69,6 @@
         font-weight: 500;
     }
 
-    /* --- Descrição --- */
     .descricao {
         font-size: 1.18rem;
         line-height: 1.85;
@@ -80,7 +77,6 @@
         text-align: justify;
     }
 
-    /* --- Botões --- */
     .btn-grande {
         padding: 1.4rem 3.5rem;
         font-size: 1.25rem;
@@ -97,7 +93,6 @@
         box-shadow: 0 15px 30px rgba(0,0,0,0.22);
     }
 
-    /* --- Cards de informação --- */
     .card-info {
         background: rgba(255,255,255,0.75);
         backdrop-filter: blur(14px);
@@ -135,8 +130,7 @@
         color: var(--secondary);
         font-weight: 700;
     }
-
-    /* --- Botão WhatsApp --- */
+/* zap */
     .btn-outline {
         border: 2px solid var(--primary);
         border-radius: 12px;
@@ -151,7 +145,6 @@
         transform: scale(1.02);
     }
 
-    /* --- Produtos relacionados --- */
     .produtos-relacionados {
         margin-top: 6rem;
         padding: 3rem 1rem;
@@ -212,7 +205,6 @@
 <div class="container">
 
     <div class="produto-wrapper">
-        <!-- Imagem -->
         <div>
             <img src="https://placehold.co/800x800/1A1A1A/FFFFFF?text=Pastilha+de+Freio&font=roboto"
                  alt="Pastilha de Freio Dianteira"
@@ -246,7 +238,6 @@
                 <p><strong>Estoque:</strong> <span>148 unidades</span></p>
             </div>
 
-            <!-- Caixa de compatibilidade -->
             <div class="card-info">
                 <h3>Veículos Compatíveis</h3>
                 <p>• Volkswagen Gol G5/G6/G7/G8</p>
@@ -257,14 +248,12 @@
                 <p><strong>+ de 50 modelos populares</strong></p>
             </div>
 
-            <!-- Botão secundário -->
             <a href="https://wa.me/5547999999999" class="btn btn-outline" style="width:100%; padding:1rem; text-align:center;">
                 Falar no WhatsApp
             </a>
         </div>
     </div>
 
-    <!-- Produtos Relacionados (preenche o fundo) -->
     <div class="produtos-relacionados">
         <h2>Produtos Relacionados</h2>
         <div class="grid-relacionados">

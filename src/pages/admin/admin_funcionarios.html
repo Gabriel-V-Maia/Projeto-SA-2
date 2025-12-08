@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Clientes - Automax</title>
+    <title>Gerenciar Funcionários - Automax</title>
 </head>
 <body>
     <header class="header">
         <div class="header-content">
-            <a href="/dashboard" class="logo">
+            <a href="/admin/admin" class="logo">
                 <span class="logo-auto">Auto</span><span class="logo-max">Max</span>
             </a>
             <div class="header-actions">
-                <a href="/dashboard" class="btn btn-outline">← Dashboard</a>
+                <a href="/admin/admin" class="btn btn-outline">← Dashboard</a>
                 <a href="/logout" class="btn btn-primary">Sair</a>
             </div>
         </div>
@@ -20,8 +20,8 @@
 
     <div class="container">
         <div class="page-header">
-            <h1>Gerenciar Clientes</h1>
-            <p>Visualize e edite informações de clientes</p>
+            <h1>Gerenciar Funcionários</h1>
+            <p>Visualize e edite informações de funcionários</p>
         </div>
 
         <div class="table-container">
@@ -30,29 +30,46 @@
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
-                        <th>CPF</th>
-                        <th>Celular</th>
-                        <th>Email</th>
-                        <th>Veículos</th>
+                        <th>Nível de Acesso</th>
+                        <th>Cargo</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for cliente in clientes %}
+                    {% for funcionario in funcionarios %}
                     <tr>
-                        <td>{{ cliente[0] }}</td>
-                        <td>{{ cliente[1] }}</td>
-                        <td>{{ cliente[2] }}</td>
-                        <td>{{ cliente[3] }}</td>
-                        <td>{{ cliente[4] }}</td>
-                        <td>{{ cliente[5] if cliente[5] else 'Nenhum' }}</td>
+                        <td>{{ funcionario[0] }}</td>
+                        <td>{{ funcionario[1] }}</td>
                         <td>
-                            <a href="/admin/clientes/editar/{{ cliente[0] }}" class="btn-action btn-edit">Editar</a>
+                            <span class="level-badge level-{{ funcionario[2] }}">
+                                Nível {{ funcionario[2] }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if funcionario[2] == '3' %}
+                            <span class="badge badge-primary">Gerente</span>
+                            {% elif funcionario[2] == '2' %}
+                            <span class="badge badge-info">Recepcionista</span>
+                            {% else %}
+                            <span class="badge badge-success">Mecânico</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/admin/funcionarios/editar/{{ funcionario[0] }}" class="btn-action btn-edit">Editar</a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <div class="info-panel">
+            <h3>Níveis de Acesso</h3>
+            <ul>
+                <li><strong>Nível 3 (Gerente):</strong> Acesso total ao sistema, pode gerenciar funcionários, clientes, ordens e estoque</li>
+                <li><strong>Nível 2 (Recepcionista):</strong> Pode gerenciar clientes e visualizar ordens de serviço</li>
+                <li><strong>Nível 1 (Mecânico):</strong> Pode visualizar e atualizar ordens de serviço e estoque</li>
+            </ul>
         </div>
     </div>
 
@@ -66,6 +83,8 @@
             --text: #212121;
             --text-light: #757575;
             --border: #E0E0E0;
+            --success: #4CAF50;
+            --info: #2196F3;
         }
 
         * {
@@ -174,6 +193,7 @@
             padding: 1.5rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             overflow-x: auto;
+            margin-bottom: 2rem;
         }
 
         .data-table {
@@ -203,6 +223,52 @@
             background-color: var(--surface);
         }
 
+        .level-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .level-3 {
+            background: rgba(211, 47, 47, 0.1);
+            color: var(--primary);
+        }
+
+        .level-2 {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--info);
+        }
+
+        .level-1 {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background: rgba(211, 47, 47, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-info {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--info);
+        }
+
+        .badge-success {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+        }
+
         .btn-action {
             padding: 0.4rem 1rem;
             border-radius: 6px;
@@ -221,6 +287,38 @@
         .btn-edit:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
+        }
+
+        .info-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 2px solid var(--border);
+        }
+
+        .info-panel h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .info-panel ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .info-panel li {
+            padding: 0.75rem;
+            background: var(--surface);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .info-panel strong {
+            color: var(--secondary);
         }
     </style>
 </body>

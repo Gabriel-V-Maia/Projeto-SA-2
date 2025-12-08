@@ -3,79 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Produto - Automax</title>
+    <title>Editar Funcionário - Automax</title>
 </head>
 <body>
     <header class="header">
         <div class="header-content">
-            <a href="/dashboard" class="logo">
+            <a href="/admin/admin" class="logo">
                 <span class="logo-auto">Auto</span><span class="logo-max">Max</span>
             </a>
             <div class="header-actions">
-                <a href="/admin/estoque" class="btn btn-outline">← Voltar</a>
+                <a href="/admin/funcionarios" class="btn btn-outline">← Voltar</a>
             </div>
         </div>
     </header>
 
     <div class="container">
         <div class="form-card">
-            <h1>Editar Produto</h1>
-            <p class="subtitle">Atualize as informações do produto</p>
+            <h1>Editar Funcionário</h1>
+            <p class="subtitle">Atualize informações e permissões</p>
 
             <form method="POST" class="edit-form">
-                {% if nivel_acesso == '3' %}
                 <div class="form-group">
-                    <label>Nome do Produto</label>
-                    <input type="text" name="nome" value="{{ produto[1] }}" required>
+                    <label>Nome do Funcionário</label>
+                    <input type="text" name="nome" value="{{ funcionario[2] }}" required>
                 </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Preço (R$)</label>
-                        <input type="number" name="preco" step="0.01" value="{{ produto[2] }}" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Categoria</label>
-                        <input type="text" name="categoria" value="{{ produto[5] }}" required>
-                    </div>
-                </div>
-                {% else %}
-                <div class="info-box">
-                    <strong>{{ produto[1] }}</strong>
-                    <p style="margin-top: 0.5rem; color: var(--text-light); font-size: 0.9rem;">
-                        Preço: R$ {{ "%.2f"|format(produto[2]) }} | Categoria: {{ produto[5] }}
-                    </p>
-                </div>
-                {% endif %}
 
                 <div class="form-group">
-                    <label>Quantidade em Estoque</label>
-                    <input type="number" name="stock" value="{{ produto[3] }}" required min="0">
-                    <div class="stock-indicator">
-                        {% if produto[3] < 5 %}
-                        <span class="badge badge-error">Estoque Crítico</span>
-                        {% elif produto[3] < 10 %}
-                        <span class="badge badge-warning">Estoque Baixo</span>
-                        {% else %}
-                        <span class="badge badge-success">Estoque Normal</span>
-                        {% endif %}
+                    <label>Nível de Acesso</label>
+                    <select name="nivel" required>
+                        <option value="1" {% if funcionario[3] == '1' %}selected{% endif %}>Nível 1 - Mecânico</option>
+                        <option value="2" {% if funcionario[3] == '2' %}selected{% endif %}>Nível 2 - Recepcionista</option>
+                        <option value="3" {% if funcionario[3] == '3' %}selected{% endif %}>Nível 3 - Gerente</option>
+                    </select>
+                </div>
+
+                <div class="permissions-info">
+                    <h3>Permissões por Nível</h3>
+                    <div class="permission-grid">
+                        <div class="permission-card">
+                            <div class="permission-level">Nível 1</div>
+                            <div class="permission-title">Mecânico</div>
+                            <ul>
+                                <li>Visualizar ordens de serviço</li>
+                                <li>Visualizar e atualizar estoque</li>
+                            </ul>
+                        </div>
+
+                        <div class="permission-card">
+                            <div class="permission-level">Nível 2</div>
+                            <div class="permission-title">Recepcionista</div>
+                            <ul>
+                                <li>Visualizar ordens de serviço</li>
+                                <li>Gerenciar clientes (nome, CPF, telefone, carros)</li>
+                            </ul>
+                        </div>
+
+                        <div class="permission-card">
+                            <div class="permission-level">Nível 3</div>
+                            <div class="permission-title">Gerente</div>
+                            <ul>
+                                <li>Acesso total ao sistema</li>
+                                <li>Gerenciar funcionários</li>
+                                <li>Gerenciar clientes, ordens e estoque</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
-                {% if nivel_acesso != '3' %}
-                <div class="alert-box">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
-                    <span>Como mecânico, você pode atualizar apenas a quantidade em estoque.</span>
+                <div class="form-group">
+                    <label>Nova Senha (deixe em branco para manter a atual)</label>
+                    <input type="password" name="senha" placeholder="Digite a nova senha">
+                    <small style="color: var(--text-light); font-size: 0.85rem;">
+                        Preencha apenas se desejar alterar a senha
+                    </small>
                 </div>
-                {% endif %}
 
                 <div class="form-actions">
-                    <a href="/admin/estoque" class="btn btn-secondary">Cancelar</a>
+                    <a href="/admin/funcionarios" class="btn btn-secondary">Cancelar</a>
                     <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                 </div>
             </form>
@@ -93,8 +97,7 @@
             --text-light: #757575;
             --border: #E0E0E0;
             --success: #4CAF50;
-            --warning: #FF9800;
-            --error: #F44336;
+            --info: #2196F3;
         }
 
         * {
@@ -215,12 +218,6 @@
             gap: 1.5rem;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
         .form-group {
             display: flex;
             flex-direction: column;
@@ -233,7 +230,8 @@
             font-size: 0.95rem;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group select {
             padding: 0.75rem;
             border: 2px solid var(--border);
             border-radius: 6px;
@@ -242,59 +240,73 @@
             transition: border-color 0.3s ease;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: var(--primary);
         }
 
-        .info-box {
+        .permissions-info {
             background: var(--surface);
             padding: 1.5rem;
             border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .permissions-info h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .permission-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
             border: 2px solid var(--border);
         }
 
-        .alert-box {
-            background: rgba(255, 152, 0, 0.1);
-            border: 2px solid var(--warning);
-            padding: 1rem;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: var(--text);
-        }
-
-        .alert-box svg {
-            color: var(--warning);
-            flex-shrink: 0;
-        }
-
-        .stock-indicator {
-            margin-top: 0.5rem;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.35rem 0.75rem;
-            border-radius: 12px;
+        .permission-level {
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
         }
 
-        .badge-success {
-            background: rgba(76, 175, 80, 0.1);
-            color: var(--success);
+        .permission-title {
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.75rem;
         }
 
-        .badge-warning {
-            background: rgba(255, 152, 0, 0.1);
-            color: var(--warning);
+        .permission-card ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .badge-error {
-            background: rgba(244, 67, 54, 0.1);
-            color: var(--error);
+        .permission-card li {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .permission-card li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
         }
 
         .form-actions {
@@ -307,7 +319,7 @@
         }
 
         @media (max-width: 768px) {
-            .form-row {
+            .permission-grid {
                 grid-template-columns: 1fr;
             }
         }

@@ -8,69 +8,12 @@ from datetime import datetime, timedelta
 def home():
     return redirect('/')
 
-def fetch_products():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM produtos ORDER BY preco ASC LIMIT 6")
-    results = cursor.fetchall()
-    return results
-
-@app.route("/")
-@app.route('/index')
-@app.route('/home')
-def index():
-    usuario = session.get("usuario")
-    tipo = session.get("tipo")
-    produtos = fetch_products()
-    return render_template('index.html', usuario_logado=usuario, tipo_usuario=tipo, produtos=produtos)
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        log_email = request.form.get("email")
-        log_senha = request.form.get("senha")
-
-        conn = get_db()
-        cursor = conn.cursor()
-        
-        cursor.execute("SELECT id_cliente, senha FROM clientes WHERE email=?", (log_email,))
-        row = cursor.fetchone()
-
-        if row and bcrypt.checkpw(log_senha.encode('utf-8'), row[1]):
-            cursor.execute("SELECT nome_cliente FROM clientes WHERE email=?", (log_email,))
-            session["usuario"] = cursor.fetchone()[0]
-            session["tipo"] = "cliente"
-            session["id_cliente"] = row[0]
-            flash('Login realizado com sucesso!', 'success')
-            return redirect('/dashboard')
-
-        cursor.execute("SELECT id_funcionario, senha, nivel_de_acesso FROM funcionarios WHERE nome_funcionario=?", (log_email,))
-        row = cursor.fetchone()
-
-        if row and bcrypt.checkpw(log_senha.encode('utf-8'), row[1]):
-            cursor.execute("SELECT nome_funcionario FROM funcionarios WHERE nome_funcionario=?", (log_email,))
-            session["usuario"] = cursor.fetchone()[0]
-            session["tipo"] = "funcionario"
-            session["id_funcionario"] = row[0]
-            session["nivel_acesso"] = row[2]
-            flash('Login realizado com sucesso!', 'success')
-            return redirect('/dashboard')
-
-        flash('Usuário ou senha incorretos', 'error')
-        return redirect('/login')
-
-    return render_template('login.html')
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/login')
-
+@app.route('/admin')
 @app.route('/dashboard')
 def dashboard():
     if session.get("tipo") != "funcionario":
         flash('Acesso restrito a funcionários', 'error')
-        return redirect('/login')
+        return redirect('/auth/login')
     
     usuario = session.get("usuario")
     nivel_acesso = session.get("nivel_acesso", "1")
@@ -161,7 +104,7 @@ def dashboard():
         atividades_recentes = []
     
     return render_template(
-        'dashboard.html',
+        'admin/admin.html',
         usuario_logado=usuario,
         nivel_acesso=nivel_acesso,
         ordens_abertas=ordens_abertas,
@@ -174,6 +117,64 @@ def dashboard():
         produtos_estoque=produtos_estoque,
         atividades_recentes=atividades_recentes
     )
+
+def fetch_products():
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM produtos ORDER BY preco ASC LIMIT 6")
+    results = cursor.fetchall()
+    return results
+
+@app.route("/")
+@app.route('/index')
+@app.route('/home')
+def index():
+    usuario = session.get("usuario")
+    tipo = session.get("tipo")
+    produtos = fetch_products()
+    return render_template('index.html', usuario_logado=usuario, tipo_usuario=tipo, produtos=produtos)
+
+@app.route('/auth/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        log_email = request.form.get("email")
+        log_senha = request.form.get("senha")
+
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT id_cliente, senha FROM clientes WHERE email=?", (log_email,))
+        row = cursor.fetchone()
+
+        if row and bcrypt.checkpw(log_senha.encode('utf-8'), row[1]):
+            cursor.execute("SELECT nome_cliente FROM clientes WHERE email=?", (log_email,))
+            session["usuario"] = cursor.fetchone()[0]
+            session["tipo"] = "cliente"
+            session["id_cliente"] = row[0]
+            flash('Login realizado com sucesso!', 'success')
+            return redirect('/')
+
+        cursor.execute("SELECT id_funcionario, senha, nivel_de_acesso FROM funcionarios WHERE nome_funcionario=?", (log_email,))
+        row = cursor.fetchone()
+
+        if row and bcrypt.checkpw(log_senha.encode('utf-8'), row[1]):
+            cursor.execute("SELECT nome_funcionario FROM funcionarios WHERE nome_funcionario=?", (log_email,))
+            session["usuario"] = cursor.fetchone()[0]
+            session["tipo"] = "funcionario"
+            session["id_funcionario"] = row[0]
+            session["nivel_acesso"] = row[2]
+            flash('Login realizado com sucesso!', 'success')
+            return redirect('/admin/admin')
+
+        flash('Usuário ou senha incorretos', 'error')
+        return redirect('/auth/login')
+
+    return render_template('auth/login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/auth/login')
 
 @app.route('/cadastro', methods=['GET', 'POST'])
 def cadastro():
@@ -228,7 +229,7 @@ def cadastro():
 
             conn.commit()
             flash('Cadastro realizado com sucesso!', 'success')
-            return redirect('/cadastro')
+            return redirect('/auth/login')
 
         except sqlite3.IntegrityError as e:
             conn.rollback()
@@ -247,12 +248,13 @@ def cadastro():
             flash('Erro ao realizar cadastro. Tente novamente.', 'error')
             return redirect('/cadastro')
 
-    return render_template('cadastro.html')
+    return render_template('auth/cadastro.html')
 
 @app.route('/pedir', methods=['GET', 'POST'])
 def pedir():
-    if not session:
-        return render_template('login.html')
+    if not session.get("id_cliente"):
+        flash('Você precisa estar logado para acessar esta página', 'error')
+        return redirect('/auth/login')
 
     conn = get_db()
     cursor = conn.cursor()
@@ -264,7 +266,7 @@ def pedir():
     cursor.execute("SELECT id_veiculo, marca, modelo, ano, placa FROM veiculos WHERE id_cliente = ?", (id_cliente,))
     veiculos = cursor.fetchall()
     
-    return render_template('pedir.html', cliente=cliente, veiculos=veiculos)
+    return render_template('servico/pedir.html', cliente=cliente, veiculos=veiculos)
 
 @app.route("/pedir/troca-pecas", methods=["POST"])
 def troca_pecas():
@@ -288,7 +290,7 @@ def troca_pecas():
     """, (id_cliente, id_veiculo, tipo, diagnostico, abertura))
     
     conn.commit()
-    return render_template("confirma.html")
+    return render_template("servico/confirma.html")
 
 @app.route("/pedir/emergencial", methods=["POST"])
 def emergencial():
@@ -315,7 +317,7 @@ def emergencial():
     """, (id_cliente, id_veiculo, tipo, diagnostico, abertura))
     
     conn.commit()
-    return render_template("confirma.html")
+    return render_template("servico/confirma.html")
 
 @app.route("/pedir/agendamento", methods=["POST"])
 def agendamento():
@@ -342,4 +344,4 @@ def agendamento():
     """, (id_cliente, id_veiculo, tipo, diagnostico, abertura))
     
     conn.commit()
-    return render_template("confirma.html")
+    return render_template("servico/confirma.html")

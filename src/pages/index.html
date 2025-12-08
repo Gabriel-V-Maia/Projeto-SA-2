@@ -190,12 +190,12 @@
         <div class="hero-buttons">
             {% if usuario_logado %}
                 {% if tipo_usuario == 'funcionario' %}
-                    <a href="/dashboard" class="btn btn-primary">Abrir Painel</a>
+                    <a href="/admin" class="btn btn-primary">Abrir Painel</a>
                 {% elif tipo_usuario == 'cliente' %}
                     <a href="/pedir" class="btn btn-primary">Pedir Ordem de Serviço</a>
                 {% endif %}
             {% else %}
-                <a href="/login" class="btn btn-primary">Entrar</a>
+                <a href="/auth/login" class="btn btn-primary">Entrar</a>
                 <a href="/cadastro" class="btn btn-outline" style="color: white; border-color: white;">Cadastrar</a>
             {% endif %}
         </div>
@@ -210,16 +210,16 @@
             {% for i in range(0,6) %}
 
             <div class="product-card">  
-                <img src="{{produtos[i].imagem}}" alt="Filtro de Óleo" class="product-image">
+                <img src="{{produtos[i].imagem}}" alt="{{produtos[i].nome}}" class="product-image">
                 <div class="product-content">
                     <span class="product-category">{{produtos[i].categoria}}</span>
                     <h3 class="product-title">{{produtos[i].nome}}</h3>
                     <p class="product-description">
-                        {{produtos[i].Detalhes}}
+                        {{produtos[i].detalhes}}
                     </p>
                     <div class="product-footer">
-                        <span class="product-price">R${{produtos[i].preco}}</span>
-                        <a href="/produto/2" class="btn btn-primary product-btn">Ver Detalhes</a>
+                        <span class="product-price">R$ {{produtos[i].preco}}</span>
+                        <a href="/produto/{{produtos[i].id_produto}}" class="btn btn-primary product-btn">Ver Detalhes</a>
                     </div>
                 </div>
             </div>
