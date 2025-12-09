@@ -32,4 +32,4 @@ def get_product(id):
         "imagem": produto[6]
     }
 
-    return render_template('produto_detalhe.html', produto=produto_dict)
+    return render_template('/produto/detalhe.html', produto=produto_dict)

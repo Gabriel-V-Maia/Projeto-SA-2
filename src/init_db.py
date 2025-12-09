@@ -187,8 +187,8 @@ def inserir_dados():
         ('Pneu 205/55', 350, 120, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1y3yHoBYkHV8xShhgFzkGqAvNVpFpIHQdQ&s', 'Pecas', 'Pneu de alta resistência para carros de passeio.'),
         ('Bateria 60Ah', 200, 80, 'https://cdn.awsli.com.br/2500x2500/515/515778/produto/19478716/9aea91eed0.jpg', 'Pecas', 'Bateria automotiva de 60Ah, ideal para carros populares.'),
         ('Amortecedor', 150, 60, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKySigx4BgpFP6KlqUzyHRuPy0YQDwoMvUGg&s', 'Pecas', 'Amortecedor para melhorar a suspensão do veículo.'),
-        ('Vela de ignição', 25, 8, 'https://example.com/vela.jpg', 'Pecas', 'Velas de ignição originais.'),
-        ('Lâmpada H4', 15, 5, 'https://example.com/lampada.jpg', 'Pecas', 'Lâmpadas para faróis.'),
+        ('Vela de ignição', 25, 8, 'https://31b93296e4855c6e.cdn.gocache.net/loja/imagens/full/vela-super-plus-1-eletrodo-bosch02.png', 'Pecas', 'Velas de ignição originais.'),
+        ('Lâmpada H4', 15, 5, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRz6vL-zqXtXgMXP-hOgOPYVGRu5cF20uQT5w&s', 'Pecas', 'Lâmpadas para faróis.'),
     ]
     
     cursor.executemany(''' 
