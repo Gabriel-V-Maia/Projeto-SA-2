@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+.page-header {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.content-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+.veiculos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.veiculo-card {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 1.5rem;
+    border: 2px solid var(--border);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.veiculo-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+.veiculo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.veiculo-marca {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--secondary);
+}
+
+.veiculo-modelo {
+    font-size: 1.1rem;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+}
+
+.veiculo-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--secondary);
+    min-width: 60px;
+}
+
+.placa-badge {
+    background: var(--primary);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.veiculo-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-edit, .btn-delete {
+    flex: 1;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-edit:hover {
+    background: var(--primary-dark);
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+.add-veiculo-form {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 2rem;
+    border: 2px solid var(--border);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-group input, .form-group select {
+    padding: 0.7rem;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-light);
+}
+
+.empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.empty-state-text {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title">Meus Veículos</h1>
+        <p class="page-subtitle">Gerencie os veículos cadastrados em sua conta</p>
+    </div>
+</section>
+
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="margin-bottom: 1rem;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="content-section">
+        <div class="section-header">
+            <h2 class="section-title">Adicionar Novo Veículo</h2>
+        </div>
+        
+        <form method="POST" action="/veiculos/adicionar" class="add-veiculo-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="marca">Marca *</label>
+                    <input type="text" id="marca" name="marca" required>
+                </div>
+                <div class="form-group">
+                    <label for="modelo">Modelo *</label>
+                    <input type="text" id="modelo" name="modelo" required>
+                </div>
+                <div class="form-group">
+                    <label for="ano">Ano *</label>
+                    <input type="text" id="ano" name="ano" required pattern="[0-9]{4}" placeholder="2024">
+                </div>
+                <div class="form-group">
+                    <label for="cor">Cor *</label>
+                    <input type="text" id="cor" name="cor" required>
+                </div>
+                <div class="form-group">
+                    <label for="placa">Placa *</label>
+                    <input type="text" id="placa" name="placa" required placeholder="ABC-1234" style="text-transform: uppercase;">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Adicionar Veículo
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="content-section">
+        <div class="section-header">
+            <h2 class="section-title">Veículos Cadastrados</h2>
+        </div>
+
+        {% if veiculos %}
+            <div class="veiculos-grid">
+                {% for veiculo in veiculos %}
+                <div class="veiculo-card">
+                    <div class="veiculo-header">
+                        <div>
+                            <div class="veiculo-marca">{{ veiculo.marca }}</div>
+                            <div class="veiculo-modelo">{{ veiculo.modelo }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="placa-badge">{{ veiculo.placa }}</div>
+                    
+                    <div class="veiculo-info">
+                        <div class="info-row">
+                            <span class="info-label">Ano:</span>
+                            <span>{{ veiculo.ano }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Cor:</span>
+                            <span>{{ veiculo.cor }}</span>
+                        </div>
+                    </div>
+
+                    <div class="veiculo-actions">
+                        <button onclick="editarVeiculo({{ veiculo.id_veiculo }}, '{{ veiculo.marca }}', '{{ veiculo.modelo }}', '{{ veiculo.ano }}', '{{ veiculo.cor }}', '{{ veiculo.placa }}')" class="btn-edit">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button onclick="confirmarExclusao({{ veiculo.id_veiculo }}, '{{ veiculo.modelo }}')" class="btn-delete">
+                            <i class="fas fa-trash"></i> Excluir
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">🚗</div>
+                <p class="empty-state-text">Você ainda não tem veículos cadastrados</p>
+                <p>Adicione seu primeiro veículo usando o formulário acima!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de Edição -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Editar Veículo</h3>
+        </div>
+        <form method="POST" action="/veiculos/editar" id="editForm">
+            <input type="hidden" id="edit_id_veiculo" name="id_veiculo">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="edit_marca">Marca *</label>
+                    <input type="text" id="edit_marca" name="marca" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_modelo">Modelo *</label>
+                    <input type="text" id="edit_modelo" name="modelo" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_ano">Ano *</label>
+                    <input type="text" id="edit_ano" name="ano" required pattern="[0-9]{4}">
+                </div>
+                <div class="form-group">
+                    <label for="edit_cor">Cor *</label>
+                    <input type="text" id="edit_cor" name="cor" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_placa">Placa *</label>
+                    <input type="text" id="edit_placa" name="placa" required style="text-transform: uppercase;">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" onclick="fecharModal()" class="btn btn-outline">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Confirmar Exclusão</h3>
+        </div>
+        <p>Tem certeza que deseja excluir o veículo <strong id="delete_veiculo_nome"></strong>?</p>
+        <p style="color: #dc3545; font-size: 0.9rem; margin-top: 1rem;">
+            <strong>Atenção:</strong> Esta ação não pode ser desfeita. Todas as ordens de serviço relacionadas a este veículo também serão excluídas.
+        </p>
+        <form method="POST" action="/veiculos/excluir" id="deleteForm">
+            <input type="hidden" id="delete_id_veiculo" name="id_veiculo">
+            <div class="modal-actions">
+                <button type="button" onclick="fecharModal()" class="btn btn-outline">Cancelar</button>
+                <button type="submit" class="btn-delete" style="border: none; padding: 0.7rem 1.5rem;">Confirmar Exclusão</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function editarVeiculo(id, marca, modelo, ano, cor, placa) {
+    document.getElementById('edit_id_veiculo').value = id;
+    document.getElementById('edit_marca').value = marca;
+    document.getElementById('edit_modelo').value = modelo;
+    document.getElementById('edit_ano').value = ano;
+    document.getElementById('edit_cor').value = cor;
+    document.getElementById('edit_placa').value = placa;
+    document.getElementById('editModal').classList.add('active');
+}
+
+function confirmarExclusao(id, modelo) {
+    document.getElementById('delete_id_veiculo').value = id;
+    document.getElementById('delete_veiculo_nome').textContent = modelo;
+    document.getElementById('deleteModal').classList.add('active');
+}
+
+function fecharModal() {
+    document.getElementById('editModal').classList.remove('active');
+    document.getElementById('deleteModal').classList.remove('active');
+}
+
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        fecharModal();
+    }
+}
+
+document.getElementById('placa').addEventListener('input', function(e) {
+    e.target.value = e.target.value.toUpperCase();
+});
+
+document.getElementById('edit_placa').addEventListener('input', function(e) {
+    e.target.value = e.target.value.toUpperCase();
+});
+</script>
+{% endblock %}

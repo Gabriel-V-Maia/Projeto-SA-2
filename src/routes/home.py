@@ -345,3 +345,169 @@ def agendamento():
     
     conn.commit()
     return render_template("servico/confirma.html")
+
+
+@app.route('/veiculos')
+def veiculos():
+    if not session.get("id_cliente"):
+        flash('Faça login para acessar seus veículos', 'error')
+        return redirect('/auth/login')
+    
+    id_cliente = session.get("id_cliente")
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT id_veiculo, marca, modelo, ano, cor, placa 
+        FROM veiculos 
+        WHERE id_cliente = ?
+        ORDER BY marca, modelo
+    """, (id_cliente,))
+    veiculos = cursor.fetchall()
+    
+    return render_template('veiculos.html', 
+                         veiculos=veiculos,
+                         usuario_logado=session.get("usuario"))
+
+@app.route('/veiculos/adicionar', methods=['POST'])
+def adicionar_veiculo():
+    if not session.get("id_cliente"):
+        flash('Faça login para adicionar veículos', 'error')
+        return redirect('/auth/login')
+    
+    id_cliente = session.get("id_cliente")
+    marca = request.form.get('marca')
+    modelo = request.form.get('modelo')
+    ano = request.form.get('ano')
+    cor = request.form.get('cor')
+    placa = request.form.get('placa').upper()
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("SELECT id_veiculo FROM veiculos WHERE placa=?", (placa,))
+        if cursor.fetchone():
+            flash('Esta placa já está cadastrada no sistema!', 'error')
+            return redirect('/veiculos')
+        
+        cursor.execute("""
+            INSERT INTO veiculos (marca, modelo, ano, cor, placa, id_cliente)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (marca, modelo, ano, cor, placa, id_cliente))
+        
+        conn.commit()
+        flash('Veículo adicionado com sucesso!', 'success')
+        
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        if 'placa' in str(e):
+            flash('Esta placa já está cadastrada!', 'error')
+        else:
+            flash('Erro ao adicionar veículo. Verifique os dados.', 'error')
+    except Exception as e:
+        conn.rollback()
+        flash('Erro ao adicionar veículo. Tente novamente.', 'error')
+    
+    return redirect('/veiculos')
+
+@app.route('/veiculos/editar', methods=['POST'])
+def editar_veiculo():
+    if not session.get("id_cliente"):
+        flash('Faça login para editar veículos', 'error')
+        return redirect('/auth/login')
+    
+    id_cliente = session.get("id_cliente")
+    id_veiculo = request.form.get('id_veiculo')
+    marca = request.form.get('marca')
+    modelo = request.form.get('modelo')
+    ano = request.form.get('ano')
+    cor = request.form.get('cor')
+    placa = request.form.get('placa').upper()
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            SELECT id_cliente FROM veiculos WHERE id_veiculo=?
+        """, (id_veiculo,))
+        veiculo = cursor.fetchone()
+        
+        if not veiculo or veiculo[0] != id_cliente:
+            flash('Você não tem permissão para editar este veículo!', 'error')
+            return redirect('/veiculos')
+        
+        cursor.execute("""
+            SELECT id_veiculo FROM veiculos 
+            WHERE placa=? AND id_veiculo!=?
+        """, (placa, id_veiculo))
+        
+        if cursor.fetchone():
+            flash('Esta placa já está cadastrada em outro veículo!', 'error')
+            return redirect('/veiculos')
+        
+        cursor.execute("""
+            UPDATE veiculos 
+            SET marca=?, modelo=?, ano=?, cor=?, placa=?
+            WHERE id_veiculo=? AND id_cliente=?
+        """, (marca, modelo, ano, cor, placa, id_veiculo, id_cliente))
+        
+        conn.commit()
+        flash('Veículo atualizado com sucesso!', 'success')
+        
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        flash('Erro ao atualizar veículo. Placa pode estar duplicada.', 'error')
+    except Exception as e:
+        conn.rollback()
+        flash('Erro ao atualizar veículo. Tente novamente.', 'error')
+    
+    return redirect('/veiculos')
+
+@app.route('/veiculos/excluir', methods=['POST'])
+def excluir_veiculo():
+    if not session.get("id_cliente"):
+        flash('Faça login para excluir veículos', 'error')
+        return redirect('/auth/login')
+    
+    id_cliente = session.get("id_cliente")
+    id_veiculo = request.form.get('id_veiculo')
+    
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+            SELECT id_cliente FROM veiculos WHERE id_veiculo=?
+        """, (id_veiculo,))
+        veiculo = cursor.fetchone()
+        
+        if not veiculo or veiculo[0] != id_cliente:
+            flash('Você não tem permissão para excluir este veículo!', 'error')
+            return redirect('/veiculos')
+        
+        cursor.execute("""
+            SELECT COUNT(*) FROM ordem 
+            WHERE id_veiculo=? AND status IN ('EM ABERTO', 'EM ANDAMENTO', 'AGUARDANDO PEÇA')
+        """, (id_veiculo,))
+        ordens_abertas = cursor.fetchone()[0]
+        
+        if ordens_abertas > 0:
+            flash(f'Não é possível excluir este veículo. Existem {ordens_abertas} ordem(ns) de serviço em aberto.', 'error')
+            return redirect('/veiculos')
+        
+        cursor.execute("""
+            DELETE FROM veiculos 
+            WHERE id_veiculo=? AND id_cliente=?
+        """, (id_veiculo, id_cliente))
+        
+        conn.commit()
+        flash('Veículo excluído com sucesso!', 'success')
+        
+    except Exception as e:
+        conn.rollback()
+        flash('Erro ao excluir veículo. Tente novamente.', 'error')
+    
+    return redirect('/veiculos')
