@@ -130,13 +130,16 @@
         color: var(--secondary);
         font-weight: 700;
     }
-/* zap */
+
+    /* zap */
     .btn-outline {
         border: 2px solid var(--primary);
         border-radius: 12px;
         font-weight: 700 !important;
         box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         transition: 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
     }
 
     .btn-outline:hover {
@@ -145,48 +148,44 @@
         transform: scale(1.02);
     }
 
-    .produtos-relacionados {
-        margin-top: 6rem;
-        padding: 3rem 1rem;
-        background: linear-gradient(135deg, #ffffff, #f4f4f4);
-        border-radius: 18px;
-        box-shadow: 0 18px 40px rgba(0,0,0,0.1);
+    .produto-actions {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--border);
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
     }
 
-    .produtos-relacionados h2 {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: var(--secondary);
-        margin-bottom: 2.5rem;
+    .produto-actions .btn {
+        flex: 1;
+        min-width: 200px;
         text-align: center;
     }
 
-    .grid-relacionados {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 2rem;
+    .stock-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
     }
 
-    .product-card {
-        background: #fff;
-        border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-        transition: 0.25s ease;
+    .stock-disponivel {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4CAF50;
     }
 
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+    .stock-baixo {
+        background: rgba(255, 152, 0, 0.1);
+        color: #FF9800;
     }
 
-    .product-card img {
-        border-radius: 12px;
-        transition: 0.3s ease;
-    }
-
-    .product-card:hover img {
-        transform: scale(1.03);
+    .stock-indisponivel {
+        background: rgba(244, 67, 54, 0.1);
+        color: #F44336;
     }
 
     @media (max-width: 992px) {
@@ -195,6 +194,12 @@
         }
         .info h1 { font-size: 2.4rem; }
         .preco { font-size: 3rem; }
+        .produto-actions {
+            flex-direction: column;
+        }
+        .produto-actions .btn {
+            width: 100%;
+        }
     }
 
 </style>
@@ -206,8 +211,8 @@
 
     <div class="produto-wrapper">
         <div>
-            <img src="https://placehold.co/800x800/1A1A1A/FFFFFF?text=Pastilha+de+Freio&font=roboto"
-                 alt="Pastilha de Freio Dianteira"
+            <img src="{{produto['imagem']}}"
+                 alt="{{produto['nome']}}"
                  class="produto-imagem">
         </div>
 
@@ -224,53 +229,75 @@
                 {{produto["detalhes"]}}
             </p>
 
-            <a href="/contato" class="btn btn-primary btn-grande">
-                Solicitar Orçamento
-            </a>
+            {% if usuario_logado and tipo_usuario == 'cliente' %}
+                <a href="/pedir" class="btn btn-primary btn-grande">
+                    Solicitar Orçamento
+                </a>
+            {% elif usuario_logado and tipo_usuario == 'funcionario' %}
+                <a href="/admin/estoque" class="btn btn-primary btn-grande">
+                    Gerenciar Estoque
+                </a>
+            {% else %}
+                <a href="/auth/login" class="btn btn-primary btn-grande">
+                    Faça Login para Solicitar
+                </a>
+            {% endif %}
 
 
             <div class="card-info">
-                <h3>Informações Técnicas</h3>
-                <p><strong>Código:</strong> <span>PT-00189</span></p>
-                <p><strong>Marca:</strong> <span>Bosch / Cobreq / Fras-le</span></p>
-                <p><strong>Material:</strong> <span>Cerâmica Premium</span></p>
-                <p><strong>Garantia:</strong> <span>6 meses</span></p>
-                <p><strong>Estoque:</strong> <span>148 unidades</span></p>
+                <h3>Informações do Produto</h3>
+                <p><strong>Código:</strong> <span>#{{produto["id"]}}</span></p>
+                <p><strong>Categoria:</strong> <span>{{produto["categoria"]}}</span></p>
+                <p><strong>Preço:</strong> <span>R$ {{produto["preco"]}}</span></p>
+                <p>
+                    <strong>Estoque:</strong> 
+                    <span>
+                        {{produto["stock"]}} unidades
+                        {% if produto["stock"] > 10 %}
+                            <span class="stock-badge stock-disponivel">Disponível</span>
+                        {% elif produto["stock"] > 0 %}
+                            <span class="stock-badge stock-baixo">Estoque Baixo</span>
+                        {% else %}
+                            <span class="stock-badge stock-indisponivel">Indisponível</span>
+                        {% endif %}
+                    </span>
+                </p>
+                <p>
+                    <strong>Disponibilidade:</strong> 
+                    <span>
+                        {% if produto["stock"] > 0 %}
+                            Pronto Entrega
+                        {% else %}
+                            Sob Encomenda (5-7 dias)
+                        {% endif %}
+                    </span>
+                </p>
             </div>
 
             <div class="card-info">
-                <h3>Veículos Compatíveis</h3>
-                <p>• Volkswagen Gol G5/G6/G7/G8</p>
-                <p>• Fiat Palio, Uno, Strada</p>
-                <p>• Chevrolet Onix, Prisma, Corsa</p>
-                <p>• Ford Ka, Fiesta</p>
-                <p>• Renault Sandero, Logan</p>
-                <p><strong>+ de 50 modelos populares</strong></p>
+                <h3>Sobre o Produto</h3>
+                <p>• Produto original e de qualidade garantida</p>
+                <p>• Instalação disponível em nossa oficina</p>
+                <p>• Garantia conforme fabricante</p>
+                <p>• Parcelamento disponível em até 12x</p>
+                <p>• Entrega rápida para região de Joinville</p>
             </div>
 
-            <a href="https://wa.me/5547999999999" class="btn btn-outline" style="width:100%; padding:1rem; text-align:center;">
-                Falar no WhatsApp
+            <a href="https://wa.link/2ub6xt" target="_blank" class="btn btn-outline" style="width:100%; padding:1rem; text-align:center;">
+                💬 Falar no WhatsApp
             </a>
-        </div>
-    </div>
 
-    <div class="produtos-relacionados">
-        <h2>Produtos Relacionados</h2>
-        <div class="grid-relacionados">
-            <div class="product-card" style="text-align:center;">
-                <img src="https://placehold.co/400x400" style="border-radius:12px; margin-bottom:1rem;">
-                <h3>Disco de Freio Ventilado</h3>
-                <p style="color:var(--primary); font-size:1.4rem; font-weight:700;">R$ 279,90</p>
-            </div>
-            <div class="product-card" style="text-align:center;">
-                <img src="https://placehold.co/400x400" style="border-radius:12px; margin-bottom:1rem;">
-                <h3>Fluido de Freio DOT 4</h3>
-                <p style="color:var(--primary); font-size:1.4rem; font-weight:700;">R$ 29,90</p>
-            </div>
-            <div class="product-card" style="text-align:center;">
-                <img src="https://placehold.co/400x400" style="border-radius:12px; margin-bottom:1rem;">
-                <h3>Pastilha Traseira</h3>
-                <p style="color:var(--primary); font-size:1.4rem; font-weight:700;">R$ 149,90</p>
+            <div class="produto-actions">
+                <a href="/" class="btn btn-outline">← Voltar para Home</a>
+                {% if usuario_logado %}
+                    {% if tipo_usuario == 'cliente' %}
+                        <a href="/veiculos" class="btn btn-outline">Meus Veículos</a>
+                    {% elif tipo_usuario == 'funcionario' %}
+                        <a href="/admin" class="btn btn-outline">Painel Admin</a>
+                    {% endif %}
+                {% else %}
+                    <a href="/cadastro" class="btn btn-outline">Cadastrar-se</a>
+                {% endif %}
             </div>
         </div>
     </div>
